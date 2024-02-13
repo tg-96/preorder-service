@@ -1,0 +1,8 @@
+rootProject.name = 'preOrderService'
+include 'userService'
+include 'activityService'
+include 'newsFeedService'
+include 'commonService'
+include 'gateway'
+include 'urekaServer'
+

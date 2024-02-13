@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group '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'
+version '0.0.1-SNAPSHOT'
+
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    //Eureka
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+//API gateway
+ext {
+    set('springCloudVersion', "2023.0.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
