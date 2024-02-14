@@ -67,4 +67,14 @@ public class ExternalItemController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 상품 정보 변경
+     */
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Void> changeItemInfo(@PathVariable("itemId") Long itemId,
+                                               @RequestBody ItemRequestDto req){
+        itemService.changeItemInfo(itemId,req);
+        return ResponseEntity.ok().build();
+    }
+
 }

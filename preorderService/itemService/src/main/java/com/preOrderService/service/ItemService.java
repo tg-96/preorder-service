@@ -142,4 +142,31 @@ public class ItemService {
 
         return item.getStock();
     }
+
+    /**
+     * 상품 정보 변경
+     */
+    @Transactional
+    public void changeItemInfo(Long itemId,ItemRequestDto req) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+        if(!req.getName().isBlank()){
+            item.changeName(req.getName());
+        }
+        if(!req.getContent().isBlank()){
+            item.changeContent(req.getContent());
+        }
+        if(req.getPrice() > 0){
+            item.changePrice(req.getPrice());
+        }
+        if(!req.getType().isBlank()){
+            item.changeType(req.getType());
+        }
+        if(req.getStock() > 0){
+            item.changeStock(req.getStock());
+        }
+        if(!req.getReserveTime().isBefore(LocalDateTime.now()) && req.getReserveTime() != null){
+            item.changeReserveTime(req.getReserveTime());
+        }
+    }
 }
