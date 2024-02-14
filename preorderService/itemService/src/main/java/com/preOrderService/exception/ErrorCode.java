@@ -8,6 +8,7 @@ public enum ErrorCode {
     NO_ITEMS("조회할 아이템이 없습니다.");
 
 
+
     private final String message;
     ErrorCode(String message){
         this.message = message;

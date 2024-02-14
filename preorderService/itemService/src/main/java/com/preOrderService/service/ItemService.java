@@ -47,6 +47,19 @@ public class ItemService {
      * 상품 상세 페이지 조회
      */
 
+    public ItemResponseDto getItemInfo(Long itemId){
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        return ItemResponseDto.builder()
+                .content(item.getContent())
+                .reserveTime(item.getReserveTime())
+                .price(item.getPrice())
+                .type(item.getType())
+                .stock(item.getStock())
+                .name(item.getName())
+                .build();
+    }
+
     /**
      * 상품 추가
      */
