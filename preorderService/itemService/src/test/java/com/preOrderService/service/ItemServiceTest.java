@@ -1,6 +1,6 @@
 package com.preOrderService.service;
 
-import com.preOrderService.dto.AddStockRequest;
+import com.preOrderService.dto.StockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.entity.Item;
@@ -8,7 +8,6 @@ import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.repository.ItemRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -248,7 +247,7 @@ class ItemServiceTest {
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            AddStockRequest req = new AddStockRequest(1L, 2);
+            StockRequest req = new StockRequest(1L, 2);
             int stock = itemService.addStock(req);
 
             //then
@@ -262,7 +261,7 @@ class ItemServiceTest {
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            AddStockRequest req = new AddStockRequest(1L, 0);
+            StockRequest req = new StockRequest(1L, 0);
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
                 itemService.addStock(req);
             });
@@ -270,9 +269,42 @@ class ItemServiceTest {
             //then
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ADD_STOCK_ZERO_ERROR);
         }
-
     }
 
+    @Nested
+    @DisplayName("재고 감소")
+    class ReduceStock{
+        @Test
+        @DisplayName("성공")
+        public void success(){
+            //given
+            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000, 10);
+            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+            StockRequest req = new StockRequest(1L,2);
+
+            //when
+            int stock = itemService.reduceStock(req);
+
+            //then
+            assertThat(stock).isEqualTo(8);
+        }
+        @Test
+        @DisplayName("감소 재고 값이 0이하이다.")
+        public void ADD_STOCK_ZERO_ERROR(){
+            //given
+            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000, 10);
+            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+            StockRequest req = new StockRequest(1L,0);
+
+            //when
+            ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
+                itemService.reduceStock(req);
+            });
+
+            //then
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ADD_STOCK_ZERO_ERROR);
+        }
+    }
 
 
 

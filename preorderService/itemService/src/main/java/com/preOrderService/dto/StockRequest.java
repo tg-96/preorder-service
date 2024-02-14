@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddStockRequest {
+public class StockRequest {
     private Long itemId;
     private int count;
 }
