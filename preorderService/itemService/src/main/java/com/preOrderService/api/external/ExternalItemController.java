@@ -1,6 +1,5 @@
 package com.preOrderService.api.external;
 
-import com.preOrderService.dto.AddStockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.exception.ErrorCode;
@@ -15,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
-public class ItemController {
+public class ExternalItemController {
     private final ItemService itemService;
 
     /**

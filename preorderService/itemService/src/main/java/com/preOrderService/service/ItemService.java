@@ -66,6 +66,7 @@ public class ItemService {
     /**
      * 상품 추가
      */
+    @Transactional
     public Item createItem(ItemRequestDto req) {
         //일반 상품일 경우
         if (req.getType().equals("general")) {
@@ -104,6 +105,7 @@ public class ItemService {
     /**
      * 상품 삭제
      */
+    @Transactional
     public Long deleteItem(Long itemId){
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
         itemRepository.delete(item);
@@ -112,6 +114,7 @@ public class ItemService {
     /**
      * 재고 추가
      */
+    @Transactional
     public int addStock(AddStockRequest req){
         Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
@@ -125,6 +128,18 @@ public class ItemService {
     }
 
     /**
-     * 재고 삭제
+     * 재고 감소
      */
+    @Transactional
+    public int reduceStock(AddStockRequest req){
+        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+        if(req.getCount() <= 0){
+            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
+        }
+
+        item.minusStock(req.getCount());
+
+        return item.getStock();
+    }
 }
