@@ -1,8 +1,8 @@
 package com.preOrderService.service;
 
-import com.preOrderService.dto.StockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
+import com.preOrderService.dto.StockRequest;
 import com.preOrderService.entity.Item;
 import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
@@ -46,13 +46,13 @@ class ItemServiceTest {
                     Arrays.asList(Item.generalItemCreate(
                                     "세탁기",
                                     "드럼 세탁기 입니다.",
-                                    10000,
-                                    10
+                                    10000L,
+                                    10L
                             ), Item.reserveItemCreate(
                                     "냉장고",
                                     "좋은 냉장고",
-                                    50000,
-                                    3,
+                                    50000L,
+                                    3L,
                                     LocalDateTime.of(2024, 2, 15, 10, 00))
                     )
             );
@@ -91,8 +91,8 @@ class ItemServiceTest {
                             Item.generalItemCreate(
                                     "세탁기",
                                     "좋은 세탁기 입니다.",
-                                    1000,
-                                    10
+                                    1000L,
+                                    10L
                             )
                     )
             );
@@ -122,12 +122,12 @@ class ItemServiceTest {
 
     @Nested
     @DisplayName("상품 추가")
-    class CreateGeneralItems{
+    class CreateGeneralItems {
         @Test
         @DisplayName("일반 상품: 성공")
         public void createGeneralItem() {
             //given
-            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, null, "general");
+            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000L, 10L, null, "general");
             when(itemRepository.save(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
             //when
@@ -142,7 +142,7 @@ class ItemServiceTest {
         @DisplayName("예약 상품: 성공")
         public void success() {
             //given
-            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "reserve");
+            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000L, 10L, LocalDateTime.of(2024, 2, 15, 12, 00), "reserve");
 
             when(itemRepository.save(Mockito.any())).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -156,9 +156,9 @@ class ItemServiceTest {
 
         @Test
         @DisplayName("예약 시간 지정 안함")
-        public void RESERVE_TIME_ERROR_(){
+        public void RESERVE_TIME_ERROR_() {
             //given
-            ItemRequestDto req_null = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, null, "reserve");
+            ItemRequestDto req_null = new ItemRequestDto("세탁기", "드럼 세탁기", 10000L, 10L, null, "reserve");
 
             //when
             ItemServiceException ex_null = assertThrows(ItemServiceException.class, () -> {
@@ -169,11 +169,12 @@ class ItemServiceTest {
             assertThat(ex_null.getErrorCode()).isEqualTo(ErrorCode.RESERVE_TIME_ERROR);
 
         }
+
         @Test
         @DisplayName("예약 시간이 현재 시간 보다 이전")
-        public void RESERVE_TIME_ERROR(){
+        public void RESERVE_TIME_ERROR() {
             //given
-            ItemRequestDto req_before = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2023, 2, 15, 12, 00), "reserve");
+            ItemRequestDto req_before = new ItemRequestDto("세탁기", "드럼 세탁기", 10000L, 10L, LocalDateTime.of(2023, 2, 15, 12, 00), "reserve");
 
             //when
             ItemServiceException ex_before = assertThrows(ItemServiceException.class, () -> {
@@ -188,7 +189,7 @@ class ItemServiceTest {
         @DisplayName("잘못된 상품 타입으로 상품 생성")
         public void ITEM_TYPE_ERROR() {
             //given
-            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "aa");
+            ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000L, 10L, LocalDateTime.of(2024, 2, 15, 12, 00), "aa");
 
             //when
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
@@ -202,7 +203,7 @@ class ItemServiceTest {
 
     @Nested
     @DisplayName("상품 삭제")
-    class deleteItem{
+    class deleteItem {
         @Test
         @DisplayName("성공")
         public void success() {
@@ -210,8 +211,8 @@ class ItemServiceTest {
             when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.generalItemCreate(
                     "세탁기",
                     "드럼 세탁기 입니다.",
-                    10000,
-                    10
+                    10000L,
+                    10L
             )));
 
             //when
@@ -220,9 +221,10 @@ class ItemServiceTest {
             //then
             assertThat(itemId).isEqualTo(1L);
         }
+
         @Test
         @DisplayName("조회되는 아이템 없음")
-        public void NO_ITEMS(){
+        public void NO_ITEMS() {
             //given
             when(itemRepository.findById(2L)).thenReturn(Optional.empty());
 
@@ -238,30 +240,31 @@ class ItemServiceTest {
 
     @Nested
     @DisplayName("재고 추가")
-    class AddStock{
+    class AddStock {
         @Test
         @DisplayName("성공")
         public void success() {
             //given
-            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
+            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000L, 10L);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            StockRequest req = new StockRequest(1L, 2);
-            int stock = itemService.addStock(req);
+            StockRequest req = new StockRequest(1L, 2L);
+            Long stock = itemService.addStock(req);
 
             //then
             assertThat(stock).isEqualTo(12);
         }
+
         @Test
         @DisplayName("재고 추가 값이 0 이하")
         public void ADD_STOCK_ZERO_ERROR() {
             //given
-            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
+            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000L, 10L);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            StockRequest req = new StockRequest(1L, 0);
+            StockRequest req = new StockRequest(1L, 0L);
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
                 itemService.addStock(req);
             });
@@ -273,28 +276,29 @@ class ItemServiceTest {
 
     @Nested
     @DisplayName("재고 감소")
-    class ReduceStock{
+    class ReduceStock {
         @Test
         @DisplayName("성공")
-        public void success(){
+        public void success() {
             //given
-            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000, 10);
+            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000L, 10L);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-            StockRequest req = new StockRequest(1L,2);
+            StockRequest req = new StockRequest(1L, 2L);
 
             //when
-            int stock = itemService.reduceStock(req);
+            Long stock = itemService.reduceStock(req);
 
             //then
             assertThat(stock).isEqualTo(8);
         }
+
         @Test
         @DisplayName("감소 재고 값이 0이하이다.")
-        public void ADD_STOCK_ZERO_ERROR(){
+        public void ADD_STOCK_ZERO_ERROR() {
             //given
-            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000, 10);
+            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000L, 10L);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-            StockRequest req = new StockRequest(1L,0);
+            StockRequest req = new StockRequest(1L, 0L);
 
             //when
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
@@ -306,9 +310,25 @@ class ItemServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("상품 정보 변경")
+    class updateItemInfo {
+        @Test
+        @DisplayName("성공")
+        public void success() {
+            //given
+            Item item = Item.reserveItemCreate("냉장고", "좋은 냉장고", 1000L, 1000L, LocalDateTime.of(2024, 2, 26, 10, 00));
+            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+            ItemRequestDto req = new ItemRequestDto("TV", "좋은 TV", null, null, null, "");
 
+            //when
+            itemService.changeItemInfo(1L, req);
 
-
+            //then
+            assertThat(item.getName()).isEqualTo("TV");
+            assertThat(item.getPrice()).isEqualTo(1000L);
+        }
+    }
 
 
 }

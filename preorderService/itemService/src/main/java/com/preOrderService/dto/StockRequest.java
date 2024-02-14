@@ -11,5 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class StockRequest {
     private Long itemId;
-    private int count;
+    private Long count;
 }

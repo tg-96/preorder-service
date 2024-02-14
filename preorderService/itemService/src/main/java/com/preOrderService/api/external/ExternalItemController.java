@@ -5,8 +5,10 @@ import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.service.ItemService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -72,7 +74,7 @@ public class ExternalItemController {
      */
     @PatchMapping("/{itemId}")
     public ResponseEntity<Void> changeItemInfo(@PathVariable("itemId") Long itemId,
-                                               @RequestBody ItemRequestDto req){
+                                               @RequestBody @Validated ItemRequestDto req){
         itemService.changeItemInfo(itemId,req);
         return ResponseEntity.ok().build();
     }

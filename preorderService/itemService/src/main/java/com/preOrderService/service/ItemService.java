@@ -115,7 +115,7 @@ public class ItemService {
      * 재고 추가
      */
     @Transactional
-    public int addStock(StockRequest req){
+    public Long addStock(StockRequest req){
         Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getCount() <= 0){
@@ -131,7 +131,7 @@ public class ItemService {
      * 재고 감소
      */
     @Transactional
-    public int reduceStock(StockRequest req){
+    public Long reduceStock(StockRequest req){
         Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getCount() <= 0){
@@ -147,25 +147,30 @@ public class ItemService {
      * 상품 정보 변경
      */
     @Transactional
-    public void changeItemInfo(Long itemId,ItemRequestDto req) {
+    public void changeItemInfo(Long itemId, ItemRequestDto req) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
-        if(!req.getName().isBlank()){
+        if(req.getName() != null && !req.getName().isBlank()){
             item.changeName(req.getName());
         }
-        if(!req.getContent().isBlank()){
+
+        if(req.getContent() != null && !req.getContent().isBlank()){
             item.changeContent(req.getContent());
         }
-        if(req.getPrice() > 0){
+
+        if(req.getPrice() != null && req.getPrice() > 0){
             item.changePrice(req.getPrice());
         }
-        if(!req.getType().isBlank()){
+
+        if(req.getType() != null && !req.getType().isBlank()){
             item.changeType(req.getType());
         }
-        if(req.getStock() > 0){
+
+        if(req.getStock() != null && req.getStock() > 0){
             item.changeStock(req.getStock());
         }
-        if(!req.getReserveTime().isBefore(LocalDateTime.now()) && req.getReserveTime() != null){
+
+        if(req.getReserveTime() != null && !req.getReserveTime().isBefore(LocalDateTime.now())){
             item.changeReserveTime(req.getReserveTime());
         }
     }

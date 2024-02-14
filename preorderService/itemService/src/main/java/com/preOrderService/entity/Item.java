@@ -22,8 +22,8 @@ public class Item {
     private Long id;
     private String name;
     private String content;
-    private int price;
-    private int stock;
+    private Long price;
+    private Long stock;
     private LocalDateTime reserveTime;
     @Enumerated
     private ItemType type;
@@ -32,7 +32,7 @@ public class Item {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Item(String name, String content, int price, int stock, LocalDateTime reserveTime, ItemType type) {
+    private Item(String name, String content, Long price, Long stock, LocalDateTime reserveTime, ItemType type) {
         this.name = name;
         this.content = content;
         this.price = price;
@@ -44,7 +44,7 @@ public class Item {
     /**
      * 일반 상품 생성
      */
-    static public Item generalItemCreate(String name, String content, int price, int stock) {
+    static public Item generalItemCreate(String name, String content, Long price, Long stock) {
         Item generalItem = new Item(name, content, price, stock, null, ItemType.GENERAL);
         return generalItem;
     }
@@ -52,7 +52,7 @@ public class Item {
     /**
      * 예약 상품 생성
      */
-    static public Item reserveItemCreate(String name, String content, int price, int stock, LocalDateTime reserveTime) {
+    static public Item reserveItemCreate(String name, String content, Long price, Long stock, LocalDateTime reserveTime) {
         Item reserveItem = new Item(name, content, price, stock, reserveTime, ItemType.RESERVE);
         return reserveItem;
     }
@@ -60,15 +60,15 @@ public class Item {
     /**
      * 재고 추가
      */
-    public void addStock(int count) {
+    public void addStock(Long count) {
         this.stock = this.stock + count;
     }
 
     /**
      * 재고 감소
      */
-    public void minusStock(int count) {
-        int value = this.stock - count;
+    public void minusStock(Long count) {
+        Long value = this.stock - count;
         if (value < 0) {
             throw new ItemServiceException(ErrorCode.OUT_OF_STOCK);
         }
@@ -83,21 +83,24 @@ public class Item {
         this.content = content;
     }
 
-    public void changePrice(int price) {
+    public void changePrice(Long price) {
         this.price = price;
     }
-    public void changeStock(int stock){
+
+    public void changeStock(Long stock) {
         this.stock = stock;
     }
-    public void changeReserveTime(LocalDateTime reserveTime){
+
+    public void changeReserveTime(LocalDateTime reserveTime) {
         this.reserveTime = reserveTime;
     }
-    public void changeType(String type){
-        if(type.equals("general")){
+
+    public void changeType(String type) {
+        if (type.equals("general")) {
             this.type = ItemType.GENERAL;
         }
-        if(type.equals("reserve")){
+        if (type.equals("reserve")) {
             this.type = ItemType.RESERVE;
-    }
         }
+    }
 }
