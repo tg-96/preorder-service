@@ -54,4 +54,9 @@ public class ItemController {
 
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping
+    public ResponseEntity<Void> deleteItem(Long itemId){
+        itemService.deleteItem(itemId);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -103,7 +103,11 @@ public class ItemService {
     /**
      * 상품 삭제
      */
-
+    public Long deleteItem(Long itemId){
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        itemRepository.delete(item);
+        return itemId;
+    }
     /**
      * 재고 추가
      */

@@ -124,7 +124,7 @@ class ItemServiceTest {
             itemService.createItem(req_null);
         });
 
-        ItemServiceException ex_before = assertThrows(ItemServiceException.class,()->{
+        ItemServiceException ex_before = assertThrows(ItemServiceException.class, () -> {
             itemService.createItem(req_before);
         });
 
@@ -138,16 +138,40 @@ class ItemServiceTest {
 
     @Test
     @DisplayName("잘못된 상품 타입으로 상품 생성")
-    public void createWrongItem(){
+    public void createWrongItem() {
         //given
-        ItemRequestDto req1 = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "aa");
+        ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "aa");
 
         //when
-        ItemServiceException ex = assertThrows(ItemServiceException.class,()->{
-            itemService.createItem(req1);
+        ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
+            itemService.createItem(req);
         });
 
         //then
         assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ITEM_TYPE_ERROR);
+    }
+
+    @Test
+    @DisplayName("상품 삭제")
+    public void deleteItem() {
+        //given
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.generalItemCreate(
+                "세탁기",
+                "드럼 세탁기 입니다.",
+                10000,
+                10
+        )));
+
+        when(itemRepository.findById(2L)).thenReturn(Optional.empty());
+
+        //when
+        Long itemId = itemService.deleteItem(1L);
+        ItemServiceException ex = assertThrows(ItemServiceException.class,() -> {
+            itemService.deleteItem(2L);
+        });
+
+        //then
+        assertThat(itemId).isEqualTo(1L);
+        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.NO_ITEMS);
     }
 }
