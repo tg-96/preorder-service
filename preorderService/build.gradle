@@ -54,7 +54,6 @@ subprojects {
         runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
         runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-
     }
 
     ext {
@@ -80,7 +79,7 @@ project(':userService') {
     }
 }
 
-project(':activityService') {
+project(':orderService') {
     bootJar { enabled = true }
     jar { enabled = false }
 
@@ -88,7 +87,15 @@ project(':activityService') {
     }
 }
 
-project(':newsFeedService') {
+project(':payService') {
+    bootJar { enabled = true }
+    jar { enabled = false }
+
+    dependencies {
+    }
+}
+
+project(':itemService') {
     bootJar { enabled = true }
     jar { enabled = false }
 
