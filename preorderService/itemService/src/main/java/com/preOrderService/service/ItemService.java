@@ -3,7 +3,6 @@ package com.preOrderService.service;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.entity.Item;
-import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.repository.ItemRepository;
@@ -79,9 +78,11 @@ public class ItemService {
         }
 
         //예약 상품일 경우
-        else if (req.getType().equals("reverse")) {
-            //예약 시간이 현재 시간보다 이전인 경우
-            if(req.getReserveTime().isBefore(LocalDateTime.now())){
+        else if (req.getType().equals("reserve")) {
+
+            //예약 시간이 현재 시간보다 이전인 경우 or 예약 시간을 지정하지 않은 경우
+            if (req.getReserveTime() == null || req.getReserveTime().isBefore(LocalDateTime.now())
+                    ) {
                 throw new ItemServiceException(ErrorCode.RESERVE_TIME_ERROR);
             }
 
@@ -95,7 +96,7 @@ public class ItemService {
             return itemRepository.save(newItem);
         }
         //상품 타입이 올바르지 않은 경우
-        else{
+        else {
             throw new ItemServiceException(ErrorCode.ITEM_TYPE_ERROR);
         }
     }

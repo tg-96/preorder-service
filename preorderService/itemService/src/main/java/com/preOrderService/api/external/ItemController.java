@@ -42,7 +42,11 @@ public class ItemController {
     @PostMapping
     public ResponseEntity<Void> createItem(ItemRequestDto req) {
         //요청폼이 바르게 입력되었는지 확인
-        if (req.getName().isBlank() || req.getContent().isBlank() || req.getPrice() <= 0 || req.getStock() <= 0 || req.getType().isBlank()) {
+        if (req.getName().isBlank() ||
+                req.getContent().isBlank() ||
+                req.getPrice() <= 0 ||
+                req.getStock() <= 0 ||
+                req.getType().isBlank()) {
             throw new ItemServiceException(ErrorCode.CREATE_ITEM_ERROR);
         }
 

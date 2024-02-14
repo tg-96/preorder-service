@@ -1,16 +1,14 @@
 package com.preOrderService.dto;
 
 import com.preOrderService.entity.ItemType;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ItemRequestDto {
 
     private String name;
