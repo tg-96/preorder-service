@@ -13,10 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class InternalItemController {
     private final ItemService itemService;
+
+    /**
+     * 재고 추가
+     */
     @PatchMapping("/stock/add")
     public void addStock(@RequestBody StockRequest req){
         itemService.addStock(req);
     }
+
+    /**
+     * 재고 감소
+     */
     @PatchMapping("/stock/reduce")
     public void reduceStock(@RequestBody StockRequest req){
         itemService.reduceStock(req);
