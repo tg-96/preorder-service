@@ -1,5 +1,6 @@
 package com.preOrderService.service;
 
+import com.preOrderService.dto.AddStockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.entity.Item;
@@ -111,6 +112,15 @@ public class ItemService {
     /**
      * 재고 추가
      */
+    public void addStock(AddStockRequest req){
+        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+        if(req.getCount() <= 0){
+            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
+        }
+
+        item.addStock(req.getCount());
+    }
 
     /**
      * 재고 삭제

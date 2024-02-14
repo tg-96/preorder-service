@@ -1,5 +1,6 @@
 package com.preOrderService.api.external;
 
+import com.preOrderService.dto.AddStockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.exception.ErrorCode;
@@ -40,7 +41,7 @@ public class ItemController {
      * 둘다 아니라면 error
      */
     @PostMapping
-    public ResponseEntity<Void> createItem(ItemRequestDto req) {
+    public ResponseEntity<Void> createItem(@RequestBody ItemRequestDto req) {
         //요청폼이 바르게 입력되었는지 확인
         if (req.getName().isBlank() ||
                 req.getContent().isBlank() ||
@@ -54,9 +55,10 @@ public class ItemController {
 
         return ResponseEntity.ok().build();
     }
-    @DeleteMapping
-    public ResponseEntity<Void> deleteItem(Long itemId){
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable("itemId") Long itemId){
         itemService.deleteItem(itemId);
         return ResponseEntity.ok().build();
     }
+
 }
