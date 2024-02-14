@@ -4,10 +4,7 @@ import com.preOrderService.dto.StockRequest;
 import com.preOrderService.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/items")
@@ -31,5 +28,14 @@ public class InternalItemController {
     public ResponseEntity<Void> reduceStock(@RequestBody StockRequest req){
         itemService.reduceStock(req);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 재고 조회
+     */
+    @GetMapping("/stock/{itemId}")
+    public ResponseEntity<Long> getStock(@PathVariable("itemId")Long itemId){
+        Long response = itemService.getStock(itemId);
+        return ResponseEntity.ok().body(response);
     }
 }
