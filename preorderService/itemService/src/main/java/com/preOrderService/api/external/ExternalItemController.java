@@ -21,16 +21,19 @@ public class ExternalItemController {
      * 상품 리스트 조회
      */
     @GetMapping
-    public List<ItemResponseDto> getAllItems() {
-        return itemService.getAllItems();
+    public ResponseEntity<List<ItemResponseDto>> getAllItems() {
+        List<ItemResponseDto> response = itemService.getAllItems();
+        return ResponseEntity.ok().body(response);
     }
 
     /**
      * 상품 상세페이지 조회
      */
     @GetMapping("/{itemId}")
-    public ItemResponseDto getItemInfo(@PathVariable("itemId") Long itemId) {
-        return itemService.getItemInfo(itemId);
+    public ResponseEntity<ItemResponseDto> getItemInfo(@PathVariable("itemId") Long itemId) {
+        ItemResponseDto response = itemService.getItemInfo(itemId);
+
+        return ResponseEntity.ok().body(response);
     }
 
     /**

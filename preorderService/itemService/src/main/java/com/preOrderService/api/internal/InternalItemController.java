@@ -3,6 +3,7 @@ package com.preOrderService.api.internal;
 import com.preOrderService.dto.StockRequest;
 import com.preOrderService.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,15 +19,17 @@ public class InternalItemController {
      * 재고 추가
      */
     @PatchMapping("/stock/add")
-    public void addStock(@RequestBody StockRequest req){
+    public ResponseEntity<Void> addStock(@RequestBody StockRequest req){
         itemService.addStock(req);
+        return ResponseEntity.ok().build();
     }
 
     /**
      * 재고 감소
      */
     @PatchMapping("/stock/reduce")
-    public void reduceStock(@RequestBody StockRequest req){
+    public ResponseEntity<Void> reduceStock(@RequestBody StockRequest req){
         itemService.reduceStock(req);
+        return ResponseEntity.ok().build();
     }
 }
