@@ -112,7 +112,7 @@ public class ItemService {
     /**
      * 재고 추가
      */
-    public void addStock(AddStockRequest req){
+    public int addStock(AddStockRequest req){
         Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getCount() <= 0){
@@ -120,6 +120,8 @@ public class ItemService {
         }
 
         item.addStock(req.getCount());
+
+        return item.getStock();
     }
 
     /**

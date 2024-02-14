@@ -1,5 +1,6 @@
 package com.preOrderService.service;
 
+import com.preOrderService.dto.AddStockRequest;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.entity.Item;
@@ -23,6 +24,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -166,12 +168,43 @@ class ItemServiceTest {
 
         //when
         Long itemId = itemService.deleteItem(1L);
-        ItemServiceException ex = assertThrows(ItemServiceException.class,() -> {
+        ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
             itemService.deleteItem(2L);
         });
 
         //then
         assertThat(itemId).isEqualTo(1L);
         assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.NO_ITEMS);
+    }
+
+    @Test
+    @DisplayName("재고 추가: 성공")
+    public void addStock() {
+        //given
+        Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+        //when
+        AddStockRequest req = new AddStockRequest(1L,2);
+        int stock = itemService.addStock(req);
+
+        //then
+        assertThat(stock).isEqualTo(12);
+    }
+    @Test
+    @DisplayName("재고 추가:실패 - 추가할 값이 0 이하")
+    public void addStock_(){
+        //given
+        Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
+        when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+        //when
+        AddStockRequest req = new AddStockRequest(1L,0);
+        ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
+            itemService.addStock(req);
+        });
+
+        //then
+        assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ADD_STOCK_ZERO_ERROR);
     }
 }
