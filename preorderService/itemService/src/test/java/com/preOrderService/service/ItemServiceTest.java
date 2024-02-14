@@ -330,5 +330,22 @@ class ItemServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("재고 조회")
+    class getStock{
+        @Test
+        @DisplayName("성공")
+        public void success(){
+            //given
+            Item item = Item.reserveItemCreate("냉장고", "좋은 냉장고", 1000L, 1000L, LocalDateTime.of(2024, 2, 26, 10, 00));
+            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
+
+            //when
+            Long stock = itemService.getStock(1L);
+
+            //then
+            assertThat(stock).isEqualTo(1000L);
+        }
+    }
 
 }
