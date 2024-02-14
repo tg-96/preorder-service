@@ -57,6 +57,10 @@ public class ExternalItemController {
 
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 상품 삭제
+     */
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Void> deleteItem(@PathVariable("itemId") Long itemId){
         itemService.deleteItem(itemId);
