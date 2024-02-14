@@ -3,16 +3,16 @@ package com.preOrderService.entity;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,8 @@ public class Item {
     private LocalDateTime reserveTime;
     @Enumerated
     private ItemType type;
+    @CreatedDate
+    private LocalDateTime createdAt;
 
     private Item(String name, String content, int price, int stock, LocalDateTime reserveTime, ItemType type) {
         this.name = name;
