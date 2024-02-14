@@ -66,7 +66,7 @@ class ItemServiceTest {
 
         @Test
         @DisplayName("조회되는 상품들이 없음")
-        public void getAllItems() {
+        public void NO_ITEMS() {
             //given
             when(itemRepository.findAll()).thenReturn(Arrays.asList());
 
@@ -85,7 +85,7 @@ class ItemServiceTest {
     class GetItemInfo {
         @Test
         @DisplayName("성공")
-        void getItemInfo() {
+        void success() {
             //given
             when(itemRepository.findById(1L)).thenReturn(Optional.of(
                             Item.generalItemCreate(
@@ -124,7 +124,7 @@ class ItemServiceTest {
     @DisplayName("상품 추가")
     class CreateGeneralItems{
         @Test
-        @DisplayName("일반 상품 추가 성공")
+        @DisplayName("일반 상품: 성공")
         public void createGeneralItem() {
             //given
             ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, null, "general");
@@ -139,8 +139,8 @@ class ItemServiceTest {
         }
 
         @Test
-        @DisplayName("예약 상품 추가 성공")
-        public void createReserveItem() {
+        @DisplayName("예약 상품: 성공")
+        public void success() {
             //given
             ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "reserve");
 
@@ -156,7 +156,7 @@ class ItemServiceTest {
 
         @Test
         @DisplayName("예약 시간 지정 안함")
-        public void ReserveTimeError(){
+        public void RESERVE_TIME_ERROR_(){
             //given
             ItemRequestDto req_null = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, null, "reserve");
 
@@ -171,7 +171,7 @@ class ItemServiceTest {
         }
         @Test
         @DisplayName("예약 시간이 현재 시간 보다 이전")
-        public void ReserveTimeError_(){
+        public void RESERVE_TIME_ERROR(){
             //given
             ItemRequestDto req_before = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2023, 2, 15, 12, 00), "reserve");
 
@@ -186,7 +186,7 @@ class ItemServiceTest {
 
         @Test
         @DisplayName("잘못된 상품 타입으로 상품 생성")
-        public void createWrongItem() {
+        public void ITEM_TYPE_ERROR() {
             //given
             ItemRequestDto req = new ItemRequestDto("세탁기", "드럼 세탁기", 10000, 10, LocalDateTime.of(2024, 2, 15, 12, 00), "aa");
 
@@ -204,8 +204,8 @@ class ItemServiceTest {
     @DisplayName("상품 삭제")
     class deleteItem{
         @Test
-        @DisplayName("상품 삭제")
-        public void deleteItem() {
+        @DisplayName("성공")
+        public void success() {
             //given
             when(itemRepository.findById(1L)).thenReturn(Optional.of(Item.generalItemCreate(
                     "세탁기",
@@ -222,7 +222,7 @@ class ItemServiceTest {
         }
         @Test
         @DisplayName("조회되는 아이템 없음")
-        public void deleteItem_(){
+        public void NO_ITEMS(){
             //given
             when(itemRepository.findById(2L)).thenReturn(Optional.empty());
 
@@ -241,7 +241,7 @@ class ItemServiceTest {
     class AddStock{
         @Test
         @DisplayName("성공")
-        public void addStock() {
+        public void success() {
             //given
             Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
@@ -255,7 +255,7 @@ class ItemServiceTest {
         }
         @Test
         @DisplayName("재고 추가 값이 0 이하")
-        public void addStock_() {
+        public void ADD_STOCK_ZERO_ERROR() {
             //given
             Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000, 10);
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
