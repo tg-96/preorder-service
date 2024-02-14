@@ -1,7 +1,9 @@
 package com.preOrderService.service;
 
+import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.entity.Item;
+import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.repository.ItemRepository;
@@ -9,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +50,7 @@ public class ItemService {
      * 상품 상세 페이지 조회
      */
 
-    public ItemResponseDto getItemInfo(Long itemId){
+    public ItemResponseDto getItemInfo(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(()
                 -> new ItemServiceException(ErrorCode.NO_ITEMS));
         return ItemResponseDto.builder()
@@ -63,7 +66,39 @@ public class ItemService {
     /**
      * 상품 추가
      */
+    public Item createItem(ItemRequestDto req) {
+        //일반 상품일 경우
+        if (req.getType().equals("general")) {
+            Item newItem = Item.generalItemCreate(
+                    req.getName(),
+                    req.getContent(),
+                    req.getPrice(),
+                    req.getStock()
+            );
+            return itemRepository.save(newItem);
+        }
 
+        //예약 상품일 경우
+        else if (req.getType().equals("reverse")) {
+            //예약 시간이 현재 시간보다 이전인 경우
+            if(req.getReserveTime().isBefore(LocalDateTime.now())){
+                throw new ItemServiceException(ErrorCode.RESERVE_TIME_ERROR);
+            }
+
+            Item newItem = Item.reserveItemCreate(
+                    req.getName(),
+                    req.getContent(),
+                    req.getPrice(),
+                    req.getStock(),
+                    req.getReserveTime()
+            );
+            return itemRepository.save(newItem);
+        }
+        //상품 타입이 올바르지 않은 경우
+        else{
+            throw new ItemServiceException(ErrorCode.ITEM_TYPE_ERROR);
+        }
+    }
     /**
      * 상품 삭제
      */
