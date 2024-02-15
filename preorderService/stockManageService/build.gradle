@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    testImplementation 'com.squareup.okhttp3:mockwebserver'
 }
 
 test {

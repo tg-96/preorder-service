@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 @Transactional(readOnly = true)
 public class StockService {
     private final RedisTemplate<String, String> redisTemplate;
+
     @Qualifier("ItemServiceClient")
     private final WebClient itemServiceClient;
 
