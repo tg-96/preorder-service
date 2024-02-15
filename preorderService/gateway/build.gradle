@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'newsFeed'
+group 'preorder'
 version '0.0.1-SNAPSHOT'
 
 
