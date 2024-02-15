@@ -16,11 +16,24 @@ public class StockManageController {
 
     private final StockService stockService;
 
+    /**
+     * 재고 예약
+     */
     @PostMapping("/reserve")
     public ResponseEntity<Void> reserveStock(@RequestParam Long itemId, @RequestParam Long userId){
         stockService.reserveStock(itemId, userId);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 재고 예약 취소
+     */
+    @PostMapping("/reserve/cancel")
+    public ResponseEntity<Void> reserveStockCancel(@RequestParam Long itemId, @RequestParam Long userId){
+        stockService.cancelReserveStock(itemId, userId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 

@@ -19,4 +19,13 @@ public class StockService {
         redisTemplate.opsForValue().setBit(key,userId,true);
     }
 
+    /**
+     * 재고 예약 취소
+     */
+    @Transactional
+    public void cancelReserveStock(Long itemId,Long userId){
+        String key = String.format("reserveStock:itemId:%d", itemId);
+        redisTemplate.opsForValue().setBit(key,userId,false);
+    }
+
 }
