@@ -5,4 +5,5 @@ include 'urekaServer'
 include 'orderService'
 include 'payService'
 include 'itemService'
+include 'stockManageService'
 
