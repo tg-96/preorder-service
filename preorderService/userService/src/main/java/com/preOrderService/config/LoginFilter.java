@@ -1,6 +1,5 @@
 package com.preOrderService.config;
 
-import com.preOrderService.config.jwt.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

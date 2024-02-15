@@ -1,13 +1,15 @@
 package com.preOrderService.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +21,13 @@ class StockServiceTest {
     @Autowired
     private RedisTemplate<String,String> redisTemplate;
 
+    @AfterEach
+    void set(){
+        Set<String> keys = redisTemplate.keys("*");
+        if(keys != null && !keys.isEmpty()){
+            redisTemplate.delete(keys);
+        }
+    }
     @Nested
     @DisplayName("재고 예약")
     class ReserveStock{

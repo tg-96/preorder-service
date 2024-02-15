@@ -1,6 +1,6 @@
 package com.preOrderService.api.external;
 
-import com.preOrderService.config.jwt.JWTUtil;
+import com.preOrderService.config.JWTUtil;
 import com.preOrderService.dto.JoinDto;
 import com.preOrderService.dto.MemberDto;
 import com.preOrderService.dto.MemberResponseDto;

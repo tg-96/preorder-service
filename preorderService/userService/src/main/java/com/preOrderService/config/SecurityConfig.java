@@ -1,7 +1,5 @@
 package com.preOrderService.config;
 
-import com.preOrderService.config.jwt.JWTFilter;
-import com.preOrderService.config.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 package com.preOrderService.service;
 
 import com.preOrderService.dto.MemberResponseDto;
-import com.preOrderService.config.jwt.JWTUtil;
+import com.preOrderService.config.JWTUtil;
 import com.preOrderService.entity.Member;
 import com.preOrderService.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

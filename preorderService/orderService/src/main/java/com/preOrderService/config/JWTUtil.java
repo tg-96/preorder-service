@@ -1,4 +1,4 @@
-package com.preOrderService.config.jwt;
+package com.preOrderService.config;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
