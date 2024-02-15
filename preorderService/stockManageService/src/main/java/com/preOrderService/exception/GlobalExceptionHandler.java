@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(PayServiceException.class)
-    public ResponseEntity<ErrorResponse> handle(PayServiceException ex) {
+    @ExceptionHandler(StockManageServiceException.class)
+    public ResponseEntity<ErrorResponse> handle(StockManageServiceException ex) {
         final ErrorCode errorCode = ex.getErrorCode();
         return new ResponseEntity<>(new ErrorResponse(errorCode, errorCode.getMessage()), HttpStatus.BAD_REQUEST);
     }
