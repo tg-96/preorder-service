@@ -34,3 +34,14 @@ services:
       - "mode=standalone"
     ports:
       - "79:79"
+
+  redis_test:
+    image: redis:alpine
+    command: redis-server --port 78
+    container_name: redis_preorder_test
+    hostname: redis_preorder
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "78:78"

@@ -4,10 +4,6 @@ spring:
       host: localhost
       port: 79
 
-#jwt secret 키
-jwt:
-  secret: ${SECRET_KEY}
-
 ## Eureka 서버
 eureka:
   client:
