@@ -341,7 +341,7 @@ class ItemServiceTest {
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            Long stock = itemService.getStock(1L);
+            Long stock = itemService.getStockByItemId(1L);
 
             //then
             assertThat(stock).isEqualTo(1000L);

@@ -178,7 +178,7 @@ public class ItemService {
     /**
      * 재고 조회
      */
-    public Long getStock(Long itemId) {
+    public Long getStockByItemId(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
         return item.getStock();
     }

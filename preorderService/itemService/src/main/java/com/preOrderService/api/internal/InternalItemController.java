@@ -35,7 +35,7 @@ public class InternalItemController {
      */
     @GetMapping("/stock/{itemId}")
     public ResponseEntity<Long> getStock(@PathVariable("itemId")Long itemId){
-        Long response = itemService.getStock(itemId);
+        Long response = itemService.getStockByItemId(itemId);
         return ResponseEntity.ok().body(response);
     }
 }
