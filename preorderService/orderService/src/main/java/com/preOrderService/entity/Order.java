@@ -2,9 +2,9 @@ package com.preOrderService.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,7 +46,7 @@ public class Order {
         this.orderStatus = OrderStatus.PRODUCT_VIEW; // 초기 상태
     }
 
-    public Order createOrder(Long itemId, Long userId, Long quantity, Long price){
+    static public Order createOrder(Long itemId, Long userId, Long quantity, Long price){
         return new Order(itemId,userId,quantity,price);
     }
 

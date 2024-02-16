@@ -8,13 +8,21 @@ import java.time.LocalDateTime;
 
 @Getter
 public class ItemResponseDto {
+
     private Long id;
+
     private String name;
+
     private String content;
+
     private Long price;
+
     private Long stock;
+
     private LocalDateTime reserveTime;
+
     private ItemType type;
+
     @Builder
     public ItemResponseDto(Long id, String name, String content, Long price, Long stock, LocalDateTime reserveTime, ItemType type) {
         this.id = id;
