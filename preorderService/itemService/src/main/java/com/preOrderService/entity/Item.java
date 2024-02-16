@@ -19,16 +19,25 @@ import java.time.LocalDateTime;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_id")
     private Long id;
+
     private String name;
+
     private String content;
+
     private Long price;
+
     private Long stock;
+
     private LocalDateTime reserveTime;
+
     @Enumerated
     private ItemType type;
+
     @CreatedDate
     private LocalDateTime createdAt;
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
 

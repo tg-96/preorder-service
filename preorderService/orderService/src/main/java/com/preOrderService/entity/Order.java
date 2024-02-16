@@ -1,28 +1,56 @@
 package com.preOrderService.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.aspectj.weaver.ast.Or;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
     private Long id;
-    private Long itemId;
-    private Long userId;
-    private int quantity;
-    private int price;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
 
+    private Long itemId;
+
+    private Long userId;
+
+    private Long quantity;
+
+    private Long price;
+
+    @Enumerated
+    private OrderStatus orderStatus;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    private LocalDateTime updatedAt;
+
+    private Order(Long itemId, Long userId, Long quantity, Long price) {
+        this.itemId = itemId;
+        this.userId = userId;
+        this.quantity = quantity;
+        this.price = price;
+        this.orderStatus = OrderStatus.PRODUCT_VIEW; // 초기 상태
+    }
+
+    public Order createOrder(Long itemId, Long userId, Long quantity, Long price){
+        return new Order(itemId,userId,quantity,price);
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+    }
 }
