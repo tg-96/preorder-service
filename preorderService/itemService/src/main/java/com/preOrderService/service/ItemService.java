@@ -116,7 +116,7 @@ public class ItemService {
      */
     @Transactional
     public Long addStock(StockRequest req){
-        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getCount() <= 0){
             throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
@@ -132,7 +132,7 @@ public class ItemService {
      */
     @Transactional
     public Long reduceStock(StockRequest req){
-        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getCount() <= 0){
             throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
@@ -148,7 +148,7 @@ public class ItemService {
      */
     @Transactional
     public void changeItemInfo(Long itemId, ItemRequestDto req) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        Item item = itemRepository.findByIdWithWriteLock(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(req.getName() != null && !req.getName().isBlank()){
             item.changeName(req.getName());
