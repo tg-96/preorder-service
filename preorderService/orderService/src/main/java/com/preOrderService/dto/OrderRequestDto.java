@@ -1,13 +1,11 @@
 package com.preOrderService.dto;
 import jakarta.validation.constraints.Min;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderRequestDto {
     @NonNull
     private Long itemId;
