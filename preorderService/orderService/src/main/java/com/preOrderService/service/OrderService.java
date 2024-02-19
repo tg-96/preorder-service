@@ -29,5 +29,12 @@ public class OrderService {
         }
         return save;
     }
+    /**
+     * 주문 삭제
+     */
+    @Transactional
+    public void deleteOrder(Long orderId){
+        orderRepository.deleteById(orderId);
+    }
 
 }

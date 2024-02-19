@@ -5,10 +5,7 @@ import com.preOrderService.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +19,14 @@ public class InternalOrderController {
     public ResponseEntity<String> createOrder(@RequestBody @Validated OrderRequestDto req){
         orderService.createOrder(req);
         return ResponseEntity.ok().body("주문이 생성되었습니다.");
+    }
+
+    /**
+     * 주문 삭제
+     */
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<String> deleteOrder(@PathVariable("orderId")Long orderId){
+        orderService.deleteOrder(orderId);
+        return ResponseEntity.ok().body("orderId: "+orderId+"가 삭제 되었습니다.");
     }
 }

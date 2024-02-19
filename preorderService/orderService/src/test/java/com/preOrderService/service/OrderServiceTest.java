@@ -62,8 +62,5 @@ class OrderServiceTest {
             //then
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.CREATE_ORDER_ERROR);
         }
-
-
-
     }
 }
