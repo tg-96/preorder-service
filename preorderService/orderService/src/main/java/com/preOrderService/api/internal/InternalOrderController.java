@@ -2,6 +2,7 @@ package com.preOrderService.api.internal;
 
 import com.preOrderService.dto.OrderRequestDto;
 import com.preOrderService.dto.OrderStatusRequestDto;
+import com.preOrderService.entity.Order;
 import com.preOrderService.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.SortComparator;
@@ -18,9 +19,9 @@ public class InternalOrderController {
      * 주문 생성
      */
     @PostMapping
-    public ResponseEntity<String> createOrder(@RequestBody @Validated OrderRequestDto req){
-        orderService.createOrder(req);
-        return ResponseEntity.ok().body("주문이 생성되었습니다.");
+    public ResponseEntity<Long> createOrder(@RequestBody @Validated OrderRequestDto req){
+        Order order = orderService.createOrder(req);
+        return ResponseEntity.ok().body(order.getId());
     }
 
     /**
