@@ -50,7 +50,4 @@ public class InternalOrderController {
         OrdersResponseDto orderInfo = orderService.getOrderInfo(orderId);
         return ResponseEntity.ok().body(orderInfo);
     }
-
-
-
 }
