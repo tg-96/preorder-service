@@ -1,6 +1,7 @@
 package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderRequestDto;
+import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.entity.Order;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.OrderServiceException;
@@ -29,12 +30,21 @@ public class OrderService {
         }
         return save;
     }
+
     /**
      * 주문 삭제
      */
     @Transactional
     public void deleteOrder(Long orderId){
         orderRepository.deleteById(orderId);
+    }
+
+    /**
+     * 주문 상태 변경
+     */
+    @Transactional
+    public void changeOrderStatus(OrderStatusRequestDto req){
+        Order order = orderRepository.findById(req.getOrderId()).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
     }
 
 }
