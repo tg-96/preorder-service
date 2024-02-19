@@ -1,5 +1,6 @@
 package com.preOrderService.api.internal;
 
+import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.StockRequest;
 import com.preOrderService.service.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,14 @@ public class InternalItemController {
     public ResponseEntity<Long> getStock(@PathVariable("itemId")Long itemId){
         Long response = itemService.getStockByItemId(itemId);
         return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 상품 타입 조회
+     */
+    @GetMapping("/type/{itemId}")
+    public ResponseEntity<CheckReserveResponseDto> getItemType(@PathVariable("itemId")Long itemId){
+        CheckReserveResponseDto res = itemService.getItemTypeAndTime(itemId);
+        return ResponseEntity.ok().body(res);
     }
 }

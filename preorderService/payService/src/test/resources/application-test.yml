@@ -11,19 +11,3 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-  mail:
-    host: smtp.gmail.com
-    port: 465
-    username: jtg960528@gmail.com
-    password: ${MAIL_PWD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          timeout: 99999
-          starttls:
-            enable: true
-    protocol: smtps
-jwt:
-  secret: ${SECRET_KEY}
-  token-validity-in-seconds: 86400
