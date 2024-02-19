@@ -2,15 +2,14 @@ package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderRequestDto;
 import com.preOrderService.dto.OrderStatusRequestDto;
-import com.preOrderService.entity.Order;
+import com.preOrderService.entity.Orders;
+import com.preOrderService.entity.OrderStatus;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.OrderServiceException;
 import com.preOrderService.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +21,9 @@ public class OrderService {
      * 주문 생성
      */
     @Transactional
-    public Order createOrder(OrderRequestDto req){
-        Order order = Order.createOrder(req.getItemId(), req.getUserId(), req.getQuantity(), req.getPrice());
-        Order save = orderRepository.save(order);
+    public Orders createOrder(OrderRequestDto req){
+        Orders order = Orders.createOrder(req.getItemId(), req.getUserId(), req.getQuantity(), req.getPrice());
+        Orders save = orderRepository.save(order);
         if (save == null) {
             throw new OrderServiceException(ErrorCode.CREATE_ORDER_ERROR);
         }
@@ -44,7 +43,24 @@ public class OrderService {
      */
     @Transactional
     public void changeOrderStatus(OrderStatusRequestDto req){
-        Order order = orderRepository.findById(req.getOrderId()).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
+
+        Orders order = orderRepository.findById(req.getOrderId()).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
+
+        if(req.getStatus().equalsIgnoreCase("PRODUCT_VIEW")){
+            order.changeOrderStatus(OrderStatus.PRODUCT_VIEW);
+        }
+        else if(req.getStatus().equalsIgnoreCase("PAYMENT_VIEW")){
+            order.changeOrderStatus(OrderStatus.PAYMENT_VIEW);
+        }
+        else if(req.getStatus().equalsIgnoreCase("PAYMENT_IN_PROGRESS")){
+            order.changeOrderStatus(OrderStatus.PAYMENT_IN_PROGRESS);
+        }
+        else if(req.getStatus().equalsIgnoreCase("PAYMENT_COMPLETED")){
+            order.changeOrderStatus(OrderStatus.PAYMENT_COMPLETED);
+        }
+        else{
+            throw new OrderServiceException(ErrorCode.ORDER_STATUS_ERROR);
+        }
     }
 
 }

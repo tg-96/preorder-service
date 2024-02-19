@@ -2,7 +2,6 @@ package com.preOrderService.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public class Order {
+public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
@@ -29,7 +28,7 @@ public class Order {
 
     private Long price;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
     @CreatedDate
@@ -38,7 +37,7 @@ public class Order {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Order(Long itemId, Long userId, Long quantity, Long price) {
+    private Orders(Long itemId, Long userId, Long quantity, Long price) {
         this.itemId = itemId;
         this.userId = userId;
         this.quantity = quantity;
@@ -46,8 +45,8 @@ public class Order {
         this.orderStatus = OrderStatus.PRODUCT_VIEW; // 초기 상태
     }
 
-    static public Order createOrder(Long itemId, Long userId, Long quantity, Long price){
-        return new Order(itemId,userId,quantity,price);
+    static public Orders createOrder(Long itemId, Long userId, Long quantity, Long price){
+        return new Orders(itemId,userId,quantity,price);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus){
