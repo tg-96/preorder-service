@@ -1,6 +1,7 @@
 package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderRequestDto;
+import com.preOrderService.dto.OrdersResponseDto;
 import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.entity.Orders;
 import com.preOrderService.entity.OrderStatus;
@@ -63,4 +64,20 @@ public class OrderService {
         }
     }
 
+    /**
+     * 주문 정보 조회
+     */
+    public OrdersResponseDto getOrderInfo(Long orderId){
+        Orders order = orderRepository.findById(orderId).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
+        return OrdersResponseDto.builder()
+                .orderStatus(order.getOrderStatus())
+                .userId(order.getUserId())
+                .price(order.getPrice())
+                .createdAt(order.getCreatedAt())
+                .itemId(order.getItemId())
+                .updatedAt(order.getUpdatedAt())
+                .quantity(order.getQuantity())
+                .orderId(order.getId())
+                .build();
+    }
 }

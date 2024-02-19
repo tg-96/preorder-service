@@ -1,6 +1,7 @@
 package com.preOrderService.api.internal;
 
 import com.preOrderService.dto.OrderRequestDto;
+import com.preOrderService.dto.OrdersResponseDto;
 import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.entity.Orders;
 import com.preOrderService.service.OrderService;
@@ -39,6 +40,15 @@ public class InternalOrderController {
     public ResponseEntity<String> changeStatus(@RequestBody OrderStatusRequestDto req){
         orderService.changeOrderStatus(req);
         return ResponseEntity.ok().body("orderId: "+req.getOrderId()+"의 주문 상태가 "+req.getStatus()+"로 변경 되었습니다.");
+    }
+
+    /**
+     * 주문 정보 조회
+     */
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrdersResponseDto> getOrderInfo(@PathVariable("orderId") Long orderId){
+        OrdersResponseDto orderInfo = orderService.getOrderInfo(orderId);
+        return ResponseEntity.ok().body(orderInfo);
     }
 
 
