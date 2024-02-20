@@ -4,8 +4,7 @@ import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
-import com.preOrderService.service.ItemService;
-import jakarta.validation.Valid;
+import com.preOrderService.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
 public class ExternalItemController {
-    private final ItemService itemService;
+    private final ProductService itemService;
 
     /**
      * 상품 리스트 조회

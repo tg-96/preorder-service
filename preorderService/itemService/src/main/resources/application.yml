@@ -14,7 +14,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-
+  data:
+    redis:
+      host: localhost
+      port: 79
 #jwt secret 키
 jwt:
   secret: ${SECRET_KEY}

@@ -3,7 +3,6 @@ package com.preOrderService.service;
 import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
-import com.preOrderService.dto.StockRequest;
 import com.preOrderService.entity.Item;
 import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ItemService {
+public class ProductService {
     private final ItemRepository itemRepository;
 
     /**
@@ -116,38 +115,6 @@ public class ItemService {
     }
 
     /**
-     * 재고 추가
-     */
-    @Transactional
-    public Long addStock(StockRequest req) {
-        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-
-        if (req.getCount() <= 0) {
-            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
-        }
-
-        item.addStock(req.getCount());
-
-        return item.getStock();
-    }
-
-    /**
-     * 재고 감소
-     */
-    @Transactional
-    public Long reduceStock(StockRequest req) {
-        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-
-        if (req.getCount() <= 0) {
-            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
-        }
-
-        item.minusStock(req.getCount());
-
-        return item.getStock();
-    }
-
-    /**
      * 상품 정보 변경
      */
     @Transactional
@@ -177,14 +144,6 @@ public class ItemService {
         if (req.getReserveTime() != null && !req.getReserveTime().isBefore(LocalDateTime.now())) {
             item.changeReserveTime(req.getReserveTime());
         }
-    }
-
-    /**
-     * 재고 조회
-     */
-    public Long getStockByItemId(Long itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-        return item.getStock();
     }
 
     /**

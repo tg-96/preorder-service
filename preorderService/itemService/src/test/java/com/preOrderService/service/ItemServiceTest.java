@@ -33,7 +33,10 @@ class ItemServiceTest {
     private ItemRepository itemRepository;
 
     @InjectMocks
-    private ItemService itemService;
+    private ProductService itemService;
+
+    @InjectMocks
+    private StockService stockService;
 
     @Nested
     @DisplayName("상품 리스트 조회")
@@ -250,7 +253,7 @@ class ItemServiceTest {
 
             //when
             StockRequest req = new StockRequest(1L, 2L);
-            Long stock = itemService.addStock(req);
+            Long stock = stockService.addStock(req);
 
             //then
             assertThat(stock).isEqualTo(12);
@@ -266,7 +269,7 @@ class ItemServiceTest {
             //when
             StockRequest req = new StockRequest(1L, 0L);
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
-                itemService.addStock(req);
+                stockService.addStock(req);
             });
 
             //then
@@ -286,7 +289,7 @@ class ItemServiceTest {
             StockRequest req = new StockRequest(1L, 2L);
 
             //when
-            Long stock = itemService.reduceStock(req);
+            Long stock = stockService.reduceStock(req);
 
             //then
             assertThat(stock).isEqualTo(8);
@@ -302,7 +305,7 @@ class ItemServiceTest {
 
             //when
             ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
-                itemService.reduceStock(req);
+                stockService.reduceStock(req);
             });
 
             //then
@@ -341,7 +344,7 @@ class ItemServiceTest {
             when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
             //when
-            Long stock = itemService.getStockByItemId(1L);
+            Long stock = stockService.getStockByItemId(1L);
 
             //then
             assertThat(stock).isEqualTo(1000L);
