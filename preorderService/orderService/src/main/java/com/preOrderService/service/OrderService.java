@@ -23,7 +23,7 @@ public class OrderService {
      */
     @Transactional
     public Orders createOrder(OrderRequestDto req){
-        Orders order = Orders.createOrder(req.getItemId(), req.getUserId(), req.getQuantity(), req.getPrice());
+        Orders order = Orders.createOrder(req.getItemId(), req.getUserId(), req.getQuantity());
         Orders save = orderRepository.save(order);
         if (save == null) {
             throw new OrderServiceException(ErrorCode.CREATE_ORDER_ERROR);
@@ -47,10 +47,7 @@ public class OrderService {
 
         Orders order = orderRepository.findById(req.getOrderId()).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
 
-        if(req.getStatus().equalsIgnoreCase("PRODUCT_VIEW")){
-            order.changeOrderStatus(OrderStatus.PRODUCT_VIEW);
-        }
-        else if(req.getStatus().equalsIgnoreCase("PAYMENT_VIEW")){
+        if(req.getStatus().equalsIgnoreCase("PAYMENT_VIEW")){
             order.changeOrderStatus(OrderStatus.PAYMENT_VIEW);
         }
         else if(req.getStatus().equalsIgnoreCase("PAYMENT_IN_PROGRESS")){
@@ -72,7 +69,6 @@ public class OrderService {
         return OrdersResponseDto.builder()
                 .orderStatus(order.getOrderStatus())
                 .userId(order.getUserId())
-                .price(order.getPrice())
                 .createdAt(order.getCreatedAt())
                 .itemId(order.getItemId())
                 .updatedAt(order.getUpdatedAt())

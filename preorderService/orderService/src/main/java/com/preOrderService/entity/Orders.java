@@ -26,8 +26,6 @@ public class Orders {
 
     private Long quantity;
 
-    private Long price;
-
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
@@ -37,16 +35,15 @@ public class Orders {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Orders(Long itemId, Long userId, Long quantity, Long price) {
+    private Orders(Long itemId, Long userId, Long quantity) {
         this.itemId = itemId;
         this.userId = userId;
         this.quantity = quantity;
-        this.price = price;
-        this.orderStatus = OrderStatus.PRODUCT_VIEW; // 초기 상태
+        this.orderStatus = OrderStatus.PAYMENT_VIEW; // 초기 상태
     }
 
-    static public Orders createOrder(Long itemId, Long userId, Long quantity, Long price){
-        return new Orders(itemId,userId,quantity,price);
+    static public Orders createOrder(Long itemId, Long userId, Long quantity){
+        return new Orders(itemId,userId,quantity);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus){

@@ -46,7 +46,7 @@ class OrderServiceTest {
         @DisplayName("성공")
         void success() {
             //given
-            OrderRequestDto req = new OrderRequestDto(1L, 1L, 1L, 1000L);
+            OrderRequestDto req = new OrderRequestDto(1L, 1L, 1L);
             Mockito.when(orderRepository.save(Mockito.any())).
                     thenAnswer(invocation -> invocation.getArgument(0));
             //when
@@ -54,14 +54,14 @@ class OrderServiceTest {
 
             //then
             Assertions.assertThat(order.getItemId()).isEqualTo(1L);
-            Assertions.assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PRODUCT_VIEW);
+            Assertions.assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PAYMENT_VIEW);
         }
 
         @Test
         @DisplayName("저장이 되지 않았을 경우")
         void CREATE_ORDER_ERROR() {
             //given
-            OrderRequestDto req = new OrderRequestDto(1L, 1L, 1L, 1000L);
+            OrderRequestDto req = new OrderRequestDto(1L, 1L, 1L);
             Mockito.when(orderRepository.save(Mockito.any())).
                     thenAnswer(invocation -> null);
 
@@ -91,9 +91,9 @@ class OrderServiceTest {
         @Transactional
         void success() {
             //given
-            Orders order = Orders.createOrder(1L, 1L, 10L, 1000L);
+            Orders order = Orders.createOrder(1L, 1L, 10L);
             Orders save = orderRepository.saveAndFlush(order);
-            OrderStatusRequestDto req = new OrderStatusRequestDto(save.getId(), "payment_VIEW");
+            OrderStatusRequestDto req = new OrderStatusRequestDto(save.getId(), "PAYMENT_IN_PROGRESS");
             logger.info("req.orderId: {}", req.getOrderId());
             logger.info("orderId: {}", save.getId());
 
@@ -109,7 +109,7 @@ class OrderServiceTest {
         @Transactional
         void orderStatusError() {
             //given
-            Orders order = Orders.createOrder(1L, 1L, 10L, 1000L);
+            Orders order = Orders.createOrder(1L, 1L, 10L);
             Orders save = orderRepository.saveAndFlush(order);
             OrderStatusRequestDto req = new OrderStatusRequestDto(save.getId(), "aaa");
 
@@ -138,7 +138,7 @@ class OrderServiceTest {
         @DisplayName("성공")
         void success() {
             //given
-            OrderRequestDto req = new OrderRequestDto(1L, 1L, 100L, 1000L);
+            OrderRequestDto req = new OrderRequestDto(1L, 1L, 100L);
             Orders order = orderService.createOrder(req);
             Long id = order.getId();
 

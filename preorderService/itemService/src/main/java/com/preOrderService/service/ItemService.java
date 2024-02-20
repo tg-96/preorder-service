@@ -1,9 +1,11 @@
 package com.preOrderService.service;
 
-import com.preOrderService.dto.StockRequest;
+import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
+import com.preOrderService.dto.StockRequest;
 import com.preOrderService.entity.Item;
+import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.repository.ItemRepository;
@@ -84,7 +86,7 @@ public class ItemService {
 
             //예약 시간이 현재 시간보다 이전인 경우 or 예약 시간을 지정하지 않은 경우
             if (req.getReserveTime() == null || req.getReserveTime().isBefore(LocalDateTime.now())
-                    ) {
+            ) {
                 throw new ItemServiceException(ErrorCode.RESERVE_TIME_ERROR);
             }
 
@@ -102,23 +104,25 @@ public class ItemService {
             throw new ItemServiceException(ErrorCode.ITEM_TYPE_ERROR);
         }
     }
+
     /**
      * 상품 삭제
      */
     @Transactional
-    public Long deleteItem(Long itemId){
+    public Long deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
         itemRepository.delete(item);
         return itemId;
     }
+
     /**
      * 재고 추가
      */
     @Transactional
-    public Long addStock(StockRequest req){
+    public Long addStock(StockRequest req) {
         Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
-        if(req.getCount() <= 0){
+        if (req.getCount() <= 0) {
             throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
         }
 
@@ -131,10 +135,10 @@ public class ItemService {
      * 재고 감소
      */
     @Transactional
-    public Long reduceStock(StockRequest req){
+    public Long reduceStock(StockRequest req) {
         Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
-        if(req.getCount() <= 0){
+        if (req.getCount() <= 0) {
             throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
         }
 
@@ -150,27 +154,27 @@ public class ItemService {
     public void changeItemInfo(Long itemId, ItemRequestDto req) {
         Item item = itemRepository.findByIdWithWriteLock(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
-        if(req.getName() != null && !req.getName().isBlank()){
+        if (req.getName() != null && !req.getName().isBlank()) {
             item.changeName(req.getName());
         }
 
-        if(req.getContent() != null && !req.getContent().isBlank()){
+        if (req.getContent() != null && !req.getContent().isBlank()) {
             item.changeContent(req.getContent());
         }
 
-        if(req.getPrice() != null && req.getPrice() > 0){
+        if (req.getPrice() != null && req.getPrice() > 0) {
             item.changePrice(req.getPrice());
         }
 
-        if(req.getType() != null && !req.getType().isBlank()){
+        if (req.getType() != null && !req.getType().isBlank()) {
             item.changeType(req.getType());
         }
 
-        if(req.getStock() != null && req.getStock() > 0){
+        if (req.getStock() != null && req.getStock() > 0) {
             item.changeStock(req.getStock());
         }
 
-        if(req.getReserveTime() != null && !req.getReserveTime().isBefore(LocalDateTime.now())){
+        if (req.getReserveTime() != null && !req.getReserveTime().isBefore(LocalDateTime.now())) {
             item.changeReserveTime(req.getReserveTime());
         }
     }
@@ -181,5 +185,24 @@ public class ItemService {
     public Long getStockByItemId(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
         return item.getStock();
+    }
+
+    /**
+     * 상품 타입 조회
+     */
+    public CheckReserveResponseDto getItemTypeAndTime(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        ItemType type = item.getType();
+        CheckReserveResponseDto checkReserveResponseDto = new CheckReserveResponseDto();
+        if(type.equals(ItemType.RESERVE)){
+            checkReserveResponseDto.setType("reserve");
+            checkReserveResponseDto.setReserveTime(item.getReserveTime());
+        }
+
+        else if(type.equals(ItemType.GENERAL)){
+            checkReserveResponseDto.setType("general");
+        }
+
+        return checkReserveResponseDto;
     }
 }
