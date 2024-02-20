@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "item-service",url = "http://localhost:8084/items")
-@Qualifier("item-service")
 public interface ItemServiceClient {
     @GetMapping("/stock/{itemId}")
     ResponseEntity<Long> getStockByItemId(@PathVariable("itemId")Long itemId);

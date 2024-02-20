@@ -60,8 +60,14 @@ public class StockService {
         Long incrementStock = redisTemplate.opsForValue().increment(key, req.getCount());
 
         //RDB와 캐시 동기화
-        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-        item.addStock(req.getCount());
+        try {
+            Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+            item.addStock(req.getCount());
+        }catch (Exception e){
+            //RDB 업데이트 실패 시 cache 원상 복귀
+            redisTemplate.opsForValue().decrement(key,req.getCount());
+            throw new ItemServiceException(ErrorCode.FAIL_SYNC_DATABASE);
+        }
     }
 
     /**
@@ -87,9 +93,13 @@ public class StockService {
         Long decrementStock = redisTemplate.opsForValue().decrement(key, req.getCount());
 
         //RDB와 캐시 동기화
-        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-
-        item.minusStock(req.getCount());
-
+        try {
+            Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+            item.minusStock(req.getCount());
+        }catch (Exception e){
+            //RDB 업데이트 실패 시, cache 원상 복귀
+            redisTemplate.opsForValue().increment(key,req.getCount());
+            throw new ItemServiceException(ErrorCode.FAIL_SYNC_DATABASE);
+        }
     }
 }
