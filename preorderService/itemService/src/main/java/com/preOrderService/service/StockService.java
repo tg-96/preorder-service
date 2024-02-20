@@ -68,15 +68,28 @@ public class StockService {
      * 재고 감소
      */
     @Transactional
-    public Long reduceStock(StockRequest req) {
-        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-
+    public void reduceStock(StockRequest req) {
+        //증가시킬 재고가 0이하이면, 진행 할 필요가 없다.
         if (req.getCount() <= 0) {
-            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
+            throw new ItemServiceException(ErrorCode.REDUCE_STOCK_ZERO_ERROR);
         }
+
+        String key = "item:stock "+req.getItemId();
+
+        Long stock = redisTemplate.opsForValue().get(key);
+
+        //재고가 캐시에 없다면 예외 처리
+        if(stock == null){
+            throw new ItemServiceException(ErrorCode.STOCK_NOT_IN_CACHE);
+        }
+
+        //캐시 재고 감소
+        Long decrementStock = redisTemplate.opsForValue().decrement(key, req.getCount());
+
+        //RDB와 캐시 동기화
+        Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         item.minusStock(req.getCount());
 
-        return item.getStock();
     }
 }

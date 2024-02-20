@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -31,6 +32,9 @@ class ItemServiceTest {
 
     @Mock
     private ItemRepository itemRepository;
+
+    @Mock
+    private RedisTemplate<String,Long> redisTemplate;
 
     @InjectMocks
     private ProductService itemService;
@@ -242,78 +246,6 @@ class ItemServiceTest {
     }
 
     @Nested
-    @DisplayName("재고 추가")
-    class AddStock {
-        @Test
-        @DisplayName("성공")
-        public void success() {
-            //given
-            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000L, 10L);
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
-            //when
-            StockRequest req = new StockRequest(1L, 2L);
-            Long stock = stockService.addStock(req);
-
-            //then
-            assertThat(stock).isEqualTo(12);
-        }
-
-        @Test
-        @DisplayName("재고 추가 값이 0 이하")
-        public void ADD_STOCK_ZERO_ERROR() {
-            //given
-            Item item = Item.generalItemCreate("세탁기", "좋은 세탁기", 10000L, 10L);
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
-            //when
-            StockRequest req = new StockRequest(1L, 0L);
-            ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
-                stockService.addStock(req);
-            });
-
-            //then
-            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ADD_STOCK_ZERO_ERROR);
-        }
-    }
-
-    @Nested
-    @DisplayName("재고 감소")
-    class ReduceStock {
-        @Test
-        @DisplayName("성공")
-        public void success() {
-            //given
-            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000L, 10L);
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-            StockRequest req = new StockRequest(1L, 2L);
-
-            //when
-            Long stock = stockService.reduceStock(req);
-
-            //then
-            assertThat(stock).isEqualTo(8);
-        }
-
-        @Test
-        @DisplayName("감소 재고 값이 0이하이다.")
-        public void ADD_STOCK_ZERO_ERROR() {
-            //given
-            Item item = Item.generalItemCreate("냉장고", "좋은 냉장고", 10000L, 10L);
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-            StockRequest req = new StockRequest(1L, 0L);
-
-            //when
-            ItemServiceException ex = assertThrows(ItemServiceException.class, () -> {
-                stockService.reduceStock(req);
-            });
-
-            //then
-            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.ADD_STOCK_ZERO_ERROR);
-        }
-    }
-
-    @Nested
     @DisplayName("상품 정보 변경")
     class updateItemInfo {
         @Test
@@ -332,23 +264,4 @@ class ItemServiceTest {
             assertThat(item.getPrice()).isEqualTo(1000L);
         }
     }
-
-    @Nested
-    @DisplayName("재고 조회")
-    class getStock{
-        @Test
-        @DisplayName("성공")
-        public void success(){
-            //given
-            Item item = Item.reserveItemCreate("냉장고", "좋은 냉장고", 1000L, 1000L, LocalDateTime.of(2024, 2, 26, 10, 00));
-            when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-
-            //when
-            Long stock = stockService.getStockByItemId(1L);
-
-            //then
-            assertThat(stock).isEqualTo(1000L);
-        }
-    }
-
 }

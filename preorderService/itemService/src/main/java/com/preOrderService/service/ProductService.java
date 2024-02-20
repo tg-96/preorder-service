@@ -119,7 +119,7 @@ public class ProductService {
      */
     @Transactional
     public void changeItemInfo(Long itemId, ItemRequestDto req) {
-        Item item = itemRepository.findByIdWithWriteLock(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if (req.getName() != null && !req.getName().isBlank()) {
             item.changeName(req.getName());
