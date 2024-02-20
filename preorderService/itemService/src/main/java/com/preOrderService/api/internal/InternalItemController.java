@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class InternalItemController {
-    private final ProductService itemService;
+    private final ProductService productService;
     private final StockService stockService;
     /**
      * 재고 추가
@@ -46,7 +46,7 @@ public class InternalItemController {
      */
     @GetMapping("/type/{itemId}")
     public ResponseEntity<CheckReserveResponseDto> getItemType(@PathVariable("itemId")Long itemId){
-        CheckReserveResponseDto res = itemService.getItemTypeAndTime(itemId);
+        CheckReserveResponseDto res = productService.getItemTypeAndTime(itemId);
         return ResponseEntity.ok().body(res);
     }
 }
