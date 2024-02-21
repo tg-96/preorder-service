@@ -3,7 +3,7 @@ package com.preOrderService.api.external;
 import com.preOrderService.dto.PayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
-import com.preOrderService.service.PayService;
+import com.preOrderService.service.EnterPayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payment")
 public class ExternalPayController {
-    private final PayService payService;
+    private final EnterPayService payService;
 
     /**
      * 결제 진입 API

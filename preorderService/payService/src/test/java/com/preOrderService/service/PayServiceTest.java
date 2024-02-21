@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ActiveProfiles("test")
 class PayServiceTest {
     @Autowired
-    private PayService payService;
+    private EnterPayService payService;
 
     @MockBean
     private OrderServiceClient orderServiceClient;

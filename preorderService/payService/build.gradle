@@ -10,10 +10,7 @@ repositories {
 }
 
 dependencies {
-    //redis
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    //wireMock
-    testImplementation 'com.github.tomakehurst:wiremock'
+
 }
 
 test {

@@ -7,7 +7,6 @@ import com.preOrderService.dto.StockRequest;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +16,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PayService {
-    private final RedisTemplate<String,Integer> redisTemplate;
+public class EnterPayService {
     private final ItemServiceClient itemServiceClient;
     private final OrderServiceClient orderServiceClient;
 
