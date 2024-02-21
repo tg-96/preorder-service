@@ -56,6 +56,8 @@ subprojects {
         runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
         runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+        //eureka
+        implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     }
 
     ext {
@@ -70,14 +72,6 @@ subprojects {
 
     test {
         useJUnitPlatform()
-    }
-}
-
-project(':userService') {
-    bootJar { enabled = true }
-    jar { enabled = false }
-
-    dependencies {
     }
 }
 

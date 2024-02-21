@@ -10,27 +10,12 @@ spring:
         - id: api-itemService
           uri: lb://API-ITEMSERVICE
           predicates:
-            - Path=/api/items/**
+            - Path=/api/v1/items/**
 
         - id: api-payService
           uri: lb://API-PAYSERVICE
           predicates:
             - Path=/api/v1/payment/**
-
-        - id: api-mailService
-          uri: lb://API-USERSERVICE
-          predicates:
-            - Path=/api/mail/**
-
-        - id: api-userService
-          uri: lb://API-USERSERVICE
-          predicates:
-            - Path=/api/v1/member/**
-
-        - id: api-loginService
-          uri: lb://API-USERSERVICE
-          predicates:
-            - Path=/login/**
   main:
     web-application-type: reactive
 
