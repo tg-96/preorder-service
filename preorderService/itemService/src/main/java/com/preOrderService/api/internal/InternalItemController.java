@@ -46,11 +46,7 @@ public class InternalItemController {
      */
     @GetMapping("/type/{itemId}")
     public ResponseEntity<CheckReserveResponseDto> getItemType(@PathVariable("itemId")Long itemId){
-<<<<<<< HEAD
         CheckReserveResponseDto res = productService.getItemTypeAndTime(itemId);
-=======
-        CheckReserveResponseDto res = itemService.getItemTypeAndTime(itemId);
->>>>>>> origin/dev
         return ResponseEntity.ok().body(res);
     }
 }

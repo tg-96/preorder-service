@@ -7,30 +7,30 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: api-memberService
-          uri: lb://API-USERSERVICE
+        - id: api-itemService
+          uri: lb://API-ITEMSERVICE
           predicates:
-            - Path=/api/member/**
+            - Path=/api/items/**
 
-        - id: api-loginService
-          uri: lb://API-USERSERVICE
+        - id: api-payService
+          uri: lb://API-PAYSERVICE
           predicates:
-            - Path=/login
+            - Path=/api/v1/payment/**
 
         - id: api-mailService
           uri: lb://API-USERSERVICE
           predicates:
             - Path=/api/mail/**
 
-        - id: api-activityService
-          uri: lb://API-ACTIVITYSERVICE
+        - id: api-userService
+          uri: lb://API-USERSERVICE
           predicates:
-            - Path=/api/activities/**
+            - Path=/api/v1/member/**
 
-        - id: api-newsFeedService
-          uri: lb://API-NEWSFEEDSERVICE
+        - id: api-loginService
+          uri: lb://API-USERSERVICE
           predicates:
-            - Path=/api/newsFeed/**
+            - Path=/login/**
   main:
     web-application-type: reactive
 

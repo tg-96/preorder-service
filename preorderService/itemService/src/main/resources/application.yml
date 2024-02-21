@@ -18,6 +18,9 @@ spring:
     redis:
       host: localhost
       port: 79
+
+  application:
+    name: api-itemService
 #jwt secret 키
 jwt:
   secret: ${SECRET_KEY}
