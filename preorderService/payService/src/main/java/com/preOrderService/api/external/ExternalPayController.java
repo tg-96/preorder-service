@@ -1,10 +1,14 @@
 package com.preOrderService.api.external;
 
+<<<<<<< HEAD
 import com.preOrderService.dto.OrderIdRequestDto;
 import com.preOrderService.dto.PayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import com.preOrderService.service.EnterPayService;
+=======
+import com.preOrderService.dto.PayRequestDto;
+>>>>>>> origin/dev
 import com.preOrderService.service.PayService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payment")
 public class ExternalPayController {
+<<<<<<< HEAD
 
     private final EnterPayService enterPayService;
+=======
+>>>>>>> origin/dev
     private final PayService payService;
 
     /**
      * 결제 진입 API
+<<<<<<< HEAD
      * return: orderId
      */
     @PostMapping("/enter")
@@ -73,4 +81,12 @@ public class ExternalPayController {
         return ResponseEntity.ok().body("결제가 완료되었습니다.");
     }
 
+=======
+     */
+    @PostMapping("/start")
+    public ResponseEntity<String> startPay(@RequestBody PayRequestDto req) {
+        payService.startPay(req);
+        return ResponseEntity.ok().body("결제 진입이 허용되었습니다.");
+    }
+>>>>>>> origin/dev
 }

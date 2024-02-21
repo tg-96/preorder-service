@@ -3,6 +3,7 @@ package com.preOrderService.service;
 import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.ItemRequestDto;
 import com.preOrderService.dto.ItemResponseDto;
+import com.preOrderService.dto.StockRequest;
 import com.preOrderService.entity.Item;
 import com.preOrderService.entity.ItemType;
 import com.preOrderService.exception.ErrorCode;
@@ -113,6 +114,41 @@ public class ProductService {
         itemRepository.delete(item);
         return itemId;
     }
+<<<<<<< HEAD:preorderService/itemService/src/main/java/com/preOrderService/service/ProductService.java
+=======
+
+    /**
+     * 재고 추가
+     */
+    @Transactional
+    public Long addStock(StockRequest req) {
+        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+        if (req.getCount() <= 0) {
+            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
+        }
+
+        item.addStock(req.getCount());
+
+        return item.getStock();
+    }
+
+    /**
+     * 재고 감소
+     */
+    @Transactional
+    public Long reduceStock(StockRequest req) {
+        Item item = itemRepository.findByIdWithWriteLock(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+        if (req.getCount() <= 0) {
+            throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
+        }
+
+        item.minusStock(req.getCount());
+
+        return item.getStock();
+    }
+>>>>>>> origin/dev:preorderService/itemService/src/main/java/com/preOrderService/service/ItemService.java
 
     /**
      * 상품 정보 변경
@@ -144,6 +180,25 @@ public class ProductService {
         if (req.getReserveTime() != null && !req.getReserveTime().isBefore(LocalDateTime.now())) {
             item.changeReserveTime(req.getReserveTime());
         }
+    }
+
+    /**
+     * 상품 타입 조회
+     */
+    public CheckReserveResponseDto getItemTypeAndTime(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        ItemType type = item.getType();
+        CheckReserveResponseDto checkReserveResponseDto = new CheckReserveResponseDto();
+        if(type.equals(ItemType.RESERVE)){
+            checkReserveResponseDto.setType("reserve");
+            checkReserveResponseDto.setReserveTime(item.getReserveTime());
+        }
+
+        else if(type.equals(ItemType.GENERAL)){
+            checkReserveResponseDto.setType("general");
+        }
+
+        return checkReserveResponseDto;
     }
 
     /**

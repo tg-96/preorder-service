@@ -14,10 +14,14 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
+<<<<<<< HEAD
   data:
     redis:
       host: localhost
       port: 79
+=======
+
+>>>>>>> origin/dev
 ## Eureka 서버
 eureka:
   client:
