@@ -56,6 +56,9 @@ public class OrderService {
         else if(req.getStatus().equalsIgnoreCase("PAYMENT_COMPLETED")){
             order.changeOrderStatus(OrderStatus.PAYMENT_COMPLETED);
         }
+        else if(req.getStatus().equalsIgnoreCase("PAYMENT_CANCEL")){
+            order.changeOrderStatus(OrderStatus.PAYMENT_CANCEL);
+        }
         else{
             throw new OrderServiceException(ErrorCode.ORDER_STATUS_ERROR);
         }

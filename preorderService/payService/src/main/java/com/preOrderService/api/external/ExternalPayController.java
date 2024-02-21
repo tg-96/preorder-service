@@ -62,7 +62,9 @@ public class ExternalPayController {
         //20% 결제 실패 (잔액 부족 등 여러 상황 시뮬)
         double probability = Math.random();
         if (probability <= 0.2) { // 20% 확률로 조건 충족
-            throw new PayServiceException(ErrorCode.INSUFFICIENT_BALANCE_ERROR);
+            //주문 취소
+            payService.cancelOrder(req.getOrderId());
+            return ResponseEntity.ok().body("주문이 취소되었습니다.");
         }
 
         //'PAYMENT_COMPLETED'로 주문 상태 변환
