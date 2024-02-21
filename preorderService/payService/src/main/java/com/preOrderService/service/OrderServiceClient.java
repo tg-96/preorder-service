@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "order-service",url="http://localhost:8084/order")
+@FeignClient(name = "order-service",url="http://localhost:8083/order")
 public interface OrderServiceClient {
     @PostMapping
     ResponseEntity<Long> createOrder(@RequestBody @Validated OrderRequestDto req);
@@ -16,6 +16,6 @@ public interface OrderServiceClient {
     @GetMapping("/{orderId}")
     ResponseEntity<OrdersResponseDto> getOrderInfo(@PathVariable("orderId") Long orderId);
 
-    @PatchMapping("/changeStatus")
+    @PostMapping("/changeStatus")
     ResponseEntity<String> changeStatus(@RequestBody OrderStatusRequestDto req);
 }

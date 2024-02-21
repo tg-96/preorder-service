@@ -24,30 +24,30 @@ public class EnterPayService {
      * 주문 생성 요청
      */
     @Transactional
-    public Long requestCreateOrder(PayRequestDto payReq){
+    public Long requestCreateOrder(PayRequestDto payReq) {
         //주문 생성
         OrderRequestDto req = new OrderRequestDto(payReq.getItemId(), payReq.getUserId(), payReq.getCount());
-        try {
+//        try {
             ResponseEntity<Long> response = orderServiceClient.createOrder(req);
             return response.getBody();
-        }catch (Exception e){
+//        } catch (Exception e) {
             // 재고 원상 복귀
-            StockRequest stockReq = new StockRequest(payReq.getItemId(), payReq.getCount());
-            itemServiceClient.addStock(stockReq);
+//            StockRequest stockReq = new StockRequest(payReq.getItemId(), payReq.getCount());
+//            itemServiceClient.addStock(stockReq);
 
-            throw new PayServiceException(ErrorCode.CREATE_ORDER_API_ERROR);
-        }
+//            throw new PayServiceException(ErrorCode.CREATE_ORDER_API_ERROR);
+//        }
     }
 
     /**
      * 재고 차감 요청
      */
     @Transactional
-    public void requestReduceStock(PayRequestDto payReq){
+    public void requestReduceStock(PayRequestDto payReq) {
         try {
             StockRequest req = new StockRequest(payReq.getItemId(), payReq.getCount());
             itemServiceClient.reduceStock(req);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new PayServiceException(ErrorCode.REDUCE_STOCK_API_ERROR);
         }
     }
@@ -57,8 +57,8 @@ public class EnterPayService {
      */
     public boolean canPurchaseItem(PayRequestDto requestDto) {
         ResponseEntity<CheckReserveResponseDto> response = itemServiceClient.getItemTypeAndTime(requestDto.getItemId());
-        if(response.getBody().getType().equals("reserve")){
-            if(response.getBody().getReserveTime().isAfter(LocalDateTime.now())){
+        if (response.getBody().getType().equals("reserve")) {
+            if (response.getBody().getReserveTime().isAfter(LocalDateTime.now())) {
                 return false;
             }
         }
@@ -68,18 +68,18 @@ public class EnterPayService {
     /**
      * 재고가 남았는지 체크
      */
-    public boolean isRemainStock(PayRequestDto req){
+    public boolean isRemainStock(PayRequestDto req) {
         ResponseEntity<Long> response;
         try {
             response = itemServiceClient.getStockByItemId(req.getItemId());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new PayServiceException(ErrorCode.GET_ITEM_STOCK_API_ERROR);
         }
 
         Long stock = response.getBody();
 
         //구매 수 보다 재고가 적으면 예외 처리
-        if(stock < req.getCount()){
+        if (stock < req.getCount()) {
             return false;
         }
 

@@ -32,7 +32,7 @@ public class Item {
 
     private LocalDateTime reserveTime;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private ItemType type;
 
     @CreatedDate

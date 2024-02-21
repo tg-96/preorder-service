@@ -36,7 +36,7 @@ public class InternalOrderController {
     /**
      * 주문 정보 변경
      */
-    @PatchMapping("/changeStatus")
+    @PostMapping("/changeStatus")
     public ResponseEntity<String> changeStatus(@RequestBody OrderStatusRequestDto req){
         orderService.changeOrderStatus(req);
         return ResponseEntity.ok().body("orderId: "+req.getOrderId()+"의 주문 상태가 "+req.getStatus()+"로 변경 되었습니다.");

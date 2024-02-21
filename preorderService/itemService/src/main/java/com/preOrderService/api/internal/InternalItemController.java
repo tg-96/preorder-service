@@ -17,7 +17,7 @@ public class InternalItemController {
     /**
      * 재고 추가
      */
-    @PatchMapping("/stock/add")
+    @PostMapping("/stock/add")
     public ResponseEntity<Void> addStock(@RequestBody StockRequest req){
         stockService.addStock(req);
         return ResponseEntity.ok().build();
@@ -26,7 +26,7 @@ public class InternalItemController {
     /**
      * 재고 감소
      */
-    @PatchMapping("/stock/reduce")
+    @PostMapping("/stock/reduce")
     public ResponseEntity<Void> reduceStock(@RequestBody StockRequest req){
         stockService.reduceStock(req);
         return ResponseEntity.ok().build();

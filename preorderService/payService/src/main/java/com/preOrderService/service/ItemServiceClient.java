@@ -5,10 +5,7 @@ import com.preOrderService.dto.StockRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "item-service",url = "http://localhost:8084/items")
 public interface ItemServiceClient {
@@ -16,8 +13,8 @@ public interface ItemServiceClient {
     ResponseEntity<Long> getStockByItemId(@PathVariable("itemId")Long itemId);
     @GetMapping("/type/{itemId}")
     ResponseEntity<CheckReserveResponseDto> getItemTypeAndTime(@PathVariable("itemId")Long itemId);
-    @PatchMapping("/stock/add")
+    @PostMapping("/stock/add")
     ResponseEntity<Void> addStock(@RequestBody StockRequest req);
-    @PatchMapping("/stock/reduce")
+    @PostMapping("/stock/reduce")
     ResponseEntity<Void> reduceStock(@RequestBody StockRequest req);
 }

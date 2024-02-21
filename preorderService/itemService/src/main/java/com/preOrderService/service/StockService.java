@@ -6,12 +6,14 @@ import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
 import com.preOrderService.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StockService {
     private final ItemRepository itemRepository;
     private final RedisTemplate<String,Long> redisTemplate;
@@ -21,7 +23,7 @@ public class StockService {
      */
     public Long getStockByItemId(Long itemId) {
         //캐시에 저장된 재고가 있는지 확인
-        String key = "item:stock "+itemId;
+        String key = "item:stock:"+itemId;
         Long stock = redisTemplate.opsForValue().get(key);
 
         // 캐시에 저장된 재고가 있으면 값 리턴
@@ -48,7 +50,7 @@ public class StockService {
             throw new ItemServiceException(ErrorCode.ADD_STOCK_ZERO_ERROR);
         }
 
-        String key = "item:stock "+req.getItemId();
+        String key = "item:stock:"+req.getItemId();
         Long stock = redisTemplate.opsForValue().get(key);
 
         //재고가 캐시에 없다면 예외 처리
@@ -75,12 +77,13 @@ public class StockService {
      */
     @Transactional
     public void reduceStock(StockRequest req) {
+        log.info("재고 감소 시작");
         //증가시킬 재고가 0이하이면, 진행 할 필요가 없다.
         if (req.getCount() <= 0) {
             throw new ItemServiceException(ErrorCode.REDUCE_STOCK_ZERO_ERROR);
         }
 
-        String key = "item:stock "+req.getItemId();
+        String key = "item:stock:"+req.getItemId();
 
         Long stock = redisTemplate.opsForValue().get(key);
 
@@ -90,7 +93,10 @@ public class StockService {
         }
 
         //캐시 재고 감소
+        log.info("캐시의 재고 값:{}",stock);
+        log.info("판매 재고 수:{}",req.getCount());
         Long decrementStock = redisTemplate.opsForValue().decrement(key, req.getCount());
+        log.info("판매 후 재고 수:{}",decrementStock);
 
         //RDB와 캐시 동기화
         try {
