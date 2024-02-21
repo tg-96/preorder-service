@@ -6,7 +6,6 @@ import com.preOrderService.dto.OrdersResponseDto;
 import com.preOrderService.dto.StockRequest;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

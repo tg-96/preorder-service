@@ -11,10 +11,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-<<<<<<< HEAD
-  redis:
-    lettuce:
+  data:
+    redis:
       host: localhost
       port: 78
-=======
->>>>>>> origin/dev
