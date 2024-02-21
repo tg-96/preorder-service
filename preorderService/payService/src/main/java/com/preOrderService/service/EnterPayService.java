@@ -24,11 +24,12 @@ public class EnterPayService {
      * 주문 생성 요청
      */
     @Transactional
-    public void requestCreateOrder(PayRequestDto payReq){
+    public Long requestCreateOrder(PayRequestDto payReq){
         //주문 생성
         OrderRequestDto req = new OrderRequestDto(payReq.getItemId(), payReq.getUserId(), payReq.getCount());
         try {
-            orderServiceClient.createOrder(req);
+            ResponseEntity<Long> response = orderServiceClient.createOrder(req);
+            return response.getBody();
         }catch (Exception e){
             // 재고 원상 복귀
             StockRequest stockReq = new StockRequest(payReq.getItemId(), payReq.getCount());

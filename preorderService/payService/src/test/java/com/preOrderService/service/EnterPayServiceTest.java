@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @ActiveProfiles("test")
-class PayServiceTest {
+class EnterPayServiceTest {
     @Autowired
     private EnterPayService payService;
 
@@ -45,7 +45,6 @@ class PayServiceTest {
         void success() {
             //given
             PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            OrderRequestDto orderRequestDto = new OrderRequestDto(1L, 1L, 2L);
 
             //when
             payService.requestCreateOrder(payRequestDto);
@@ -60,7 +59,6 @@ class PayServiceTest {
         void fail() {
             //given
             PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            OrderRequestDto orderRequestDto = new OrderRequestDto(1L, 1L, 2L);
             doThrow(new RuntimeException()).when(orderServiceClient).createOrder(any(OrderRequestDto.class));
 
             //when

@@ -1,6 +1,5 @@
 package com.preOrderService.dto;
 
-import com.preOrderService.entity.OrderStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;

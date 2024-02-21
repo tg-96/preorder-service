@@ -67,7 +67,7 @@ public class OrderService {
     public OrdersResponseDto getOrderInfo(Long orderId){
         Orders order = orderRepository.findById(orderId).orElseThrow(() -> new OrderServiceException(ErrorCode.NO_EXIST_ORDER_ID));
         return OrdersResponseDto.builder()
-                .orderStatus(order.getOrderStatus())
+                .orderStatus(order.getOrderStatus().toString())
                 .userId(order.getUserId())
                 .createdAt(order.getCreatedAt())
                 .itemId(order.getItemId())

@@ -8,7 +8,11 @@ public enum ErrorCode {
     OUT_OF_STOCK("재고가 부족합니다."),
     GET_ITEM_STOCK_API_ERROR("상품의 재고 조회 API 호출에 실패했습니다."),
     REDUCE_STOCK_API_ERROR("실제 재고 감소 API 호출에 실패했습니다."),
-    CREATE_ORDER_API_ERROR("주문 생성 API 호출에 실패했습니다.");
+    CREATE_ORDER_API_ERROR("주문 생성 API 호출에 실패했습니다."),
+    CHANGE_ORDER_STATUS_API_ERROR("주문 상태 변경 API 호출을 실패했습니다."),
+    INSUFFICIENT_BALANCE_ERROR("잔액이 부족합니다."),
+    IS_NOT_PAYMENT_VIEW_STATUS("PAYMENT_VIEW 상태가 아닙니다.");
+
     private final String message;
     ErrorCode(String message){
         this.message = message;
