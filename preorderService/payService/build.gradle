@@ -10,14 +10,10 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
     //wireMock
-    testImplementation 'org.wiremock:wiremock:3.4.1'
+    testImplementation 'com.github.tomakehurst:wiremock'
 }
 
 test {
