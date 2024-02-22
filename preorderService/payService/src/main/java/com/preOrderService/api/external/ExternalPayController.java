@@ -7,6 +7,7 @@ import com.preOrderService.exception.PayServiceException;
 import com.preOrderService.service.EnterPayService;
 import com.preOrderService.service.PayService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payment")
+@Slf4j
 public class ExternalPayController {
-
     private final EnterPayService enterPayService;
     private final PayService payService;
 
@@ -71,6 +72,40 @@ public class ExternalPayController {
         payService.changeOrderStatus(req.getOrderId(),"PAYMENT_COMPLETED");
 
         return ResponseEntity.ok().body("결제가 완료되었습니다.");
+    }
+
+    /**
+     * 예약 시간 동시주문 상황 시뮬레이션
+     */
+    @PostMapping("/test")
+    public ResponseEntity<String> simulate(@RequestBody PayRequestDto req){
+        log.info("userId:{} 결제 진입",req.getUserId());
+
+        //결제 진입
+        ResponseEntity<Long> enterPayResponse = enterPay(req);
+
+        log.info("userId:{} / 결제 진입 후 생성된 orderId: {}",req.getUserId(),enterPayResponse.getBody());
+
+        //생성된 주문 Id
+        Long orderId = enterPayResponse.getBody();
+
+        //20% 주문 실패 (고객 변심으로 주문 취소)
+        double probability = Math.random();
+        if (probability <= 0.2) { // 20% 확률로 조건 충족
+            //주문 취소
+            log.info("userId:{}, orderId:{} / 주문 취소",req.getUserId(),orderId);
+
+            payService.cancelOrder(orderId);
+            return ResponseEntity.ok().body("주문이 취소되었습니다.");
+        }
+
+        //결제
+        log.info("userId:{}, orderId:{} 결제",req.getUserId(),orderId);
+
+        OrderIdRequestDto orderIdRequestDto = new OrderIdRequestDto(orderId);
+        ResponseEntity<String> payResponse = pay(orderIdRequestDto);
+
+        return payResponse;
     }
 
 }

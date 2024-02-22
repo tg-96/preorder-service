@@ -6,6 +6,7 @@ import com.preOrderService.dto.StockRequest;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PayService {
     private final OrderServiceClient orderServiceClient;
     private final ItemServiceClient itemServiceClient;
@@ -62,6 +64,8 @@ public class PayService {
         try {
             ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
             OrdersResponseDto order = response.getBody();
+
+            log.info("orderId:{} 주문 취소 상태로 변경 요청", orderId);
 
             //주문 취소 상태로 변경 요청
             OrderStatusRequestDto req = new OrderStatusRequestDto(order.getOrderId(), "PAYMENT_CANCEL");
