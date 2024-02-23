@@ -32,7 +32,7 @@ public class StockService {
         }
 
         //캐시에 저장된 재고가 없으면 RDB에서 재고 조회
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+        Item item = itemRepository.findByIdForUpdate(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         //캐시에 재고 저장
         redisTemplate.opsForValue().set(key,item.getStock());
@@ -63,8 +63,8 @@ public class StockService {
 
         //RDB와 캐시 동기화
         try {
-            Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-            item.addStock(req.getCount());
+            Item item = itemRepository.findByIdForUpdate(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+            item.changeStock(incrementStock);
         }catch (Exception e){
             //RDB 업데이트 실패 시 cache 원상 복귀
             redisTemplate.opsForValue().decrement(key,req.getCount());
@@ -96,15 +96,20 @@ public class StockService {
         log.info("캐시의 재고 값:{}",stock);
         log.info("판매 재고 수:{}",req.getCount());
         Long decrementStock = redisTemplate.opsForValue().decrement(key, req.getCount());
-        log.info("판매 후 재고 수:{}",decrementStock);
+        log.info("재고 감소 후 캐시 재고 수:{}",decrementStock);
 
         //RDB와 캐시 동기화
         try {
-            Item item = itemRepository.findById(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-            item.minusStock(req.getCount());
+            log.info("RDB와 캐시 동기화");
+
+            Item item = itemRepository.findByIdForUpdate(req.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+            item.changeStock(decrementStock);
         }catch (Exception e){
             //RDB 업데이트 실패 시, cache 원상 복귀
-            redisTemplate.opsForValue().increment(key,req.getCount());
+            log.info("RDB와 캐시 동기화 실패");
+            Long increment = redisTemplate.opsForValue().increment(key, req.getCount());
+            log.info("RDB와 캐시 동기화 실패 후 캐시 재고(원상복귀):{}",increment);
+
             throw new ItemServiceException(ErrorCode.FAIL_SYNC_DATABASE);
         }
     }

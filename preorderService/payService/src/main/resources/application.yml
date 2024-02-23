@@ -32,3 +32,12 @@ eureka:
     prefer-ip-address: true
 server:
   port: 8082
+
+logging:
+  file:
+    name: ./logs/paySimulation.log
+  level:
+    root: INFO
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB

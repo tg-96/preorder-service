@@ -34,7 +34,7 @@ public class InternalOrderController {
     }
 
     /**
-     * 주문 정보 변경
+     * 주문 상태 변경
      */
     @PostMapping("/changeStatus")
     public ResponseEntity<String> changeStatus(@RequestBody OrderStatusRequestDto req){

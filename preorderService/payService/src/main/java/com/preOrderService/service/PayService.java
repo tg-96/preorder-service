@@ -27,11 +27,11 @@ public class PayService {
         try {
             ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
             String orderStatus = response.getBody().getOrderStatus();
-
+            log.info("orderId:{}, 주문 상태:{}",orderId,orderStatus);
             //주문 상태 확인
             if (!orderStatus.equalsIgnoreCase("PAYMENT_VIEW")) {
-
                 //결제 취소
+                log.info("orderId:{}, 주문 상태:{}, \"PAYMENT_VIEW\" 아니므로 결제 취소",orderId,orderStatus);
                 cancelOrder(orderId);
                 return false;
             }
@@ -62,16 +62,18 @@ public class PayService {
     public void cancelOrder(Long orderId) {
         //주문 조회
         try {
+            log.info("orderId:{}, 주문 취소", orderId);
+
             ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
             OrdersResponseDto order = response.getBody();
 
-            log.info("orderId:{} 주문 취소 상태로 변경 요청", orderId);
-
             //주문 취소 상태로 변경 요청
+            log.info("orderId:{}, 주문 취소 상태로 변경 요청", orderId);
             OrderStatusRequestDto req = new OrderStatusRequestDto(order.getOrderId(), "PAYMENT_CANCEL");
             orderServiceClient.changeStatus(req);
 
             //재고 롤백
+            log.info("orderId:{}, 재고 롤백", orderId);
             StockRequest stockRequest = new StockRequest(order.getItemId(), order.getQuantity());
             itemServiceClient.addStock(stockRequest);
         }
