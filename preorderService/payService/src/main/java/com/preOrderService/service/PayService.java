@@ -27,11 +27,11 @@ public class PayService {
         try {
             ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
             String orderStatus = response.getBody().getOrderStatus();
-            log.info("orderId:{}, 주문 상태:{}",orderId,orderStatus);
+            log.info("orderId:{}, order status:{}",orderId,orderStatus);
             //주문 상태 확인
             if (!orderStatus.equalsIgnoreCase("PAYMENT_VIEW")) {
                 //결제 취소
-                log.info("orderId:{}, 주문 상태:{}, \"PAYMENT_VIEW\" 아니므로 결제 취소",orderId,orderStatus);
+                log.info("orderId:{}, order status:{}, no \"PAYMENT_VIEW\" / cancel pay ",orderId,orderStatus);
                 cancelOrder(orderId);
                 return false;
             }
@@ -62,7 +62,7 @@ public class PayService {
     public void cancelOrder(Long orderId) {
         //주문 조회
         try {
-            log.info("orderId:{}, 주문 취소", orderId);
+            log.info("orderId:{}, cancel order", orderId);
 
             ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
             OrdersResponseDto order = response.getBody();

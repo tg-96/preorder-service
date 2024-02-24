@@ -26,14 +26,14 @@ public class EnterPayService {
      */
     @Transactional
     public boolean reserveStockRequest(PayRequestDto req) {
-        log.info("userId:{}"+req.getUserId());
-        log.info("itemId:{}"+req.getItemId());
-        log.info("stockCount:{}"+req.getCount());
+        log.info("userId:{}",req.getUserId());
+        log.info("itemId:{}",req.getItemId());
+        log.info("stockCount:{}",req.getCount());
 
         ResponseEntity<Boolean> response = itemServiceClient.reserveStock(req);
 
         Boolean reserveStock = response.getBody();
-        log.info("재고 예약 여부:{}"+reserveStock);
+        log.info("can reserve stock:{}",reserveStock);
 
         return reserveStock;
     }
@@ -49,12 +49,12 @@ public class EnterPayService {
         //주문 생성
         OrderRequestDto req = new OrderRequestDto(payReq.getItemId(), payReq.getUserId(), payReq.getCount());
         try {
-            log.info("userid:{},주문 생성 요청",payReq.getUserId());
+            log.info("userid:{},create order request ",payReq.getUserId());
             ResponseEntity<Long> response = orderServiceClient.createOrder(req);
             return response.getBody();
         } catch (Exception e) {
             //재고 예약 취소
-            log.info("userid:{},주문 생성 요청 실패",payReq.getUserId());
+            log.info("userid:{},fail create order request",payReq.getUserId());
 
             itemServiceClient.cancelStock(payReq);
             return -1L;

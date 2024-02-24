@@ -34,7 +34,7 @@ public class ExternalPayController {
      */
     @PostMapping("/enter")
     public ResponseEntity<Long> enterPay(@RequestBody PayRequestDto req) throws InterruptedException {
-        log.info("userId:{} 결제 진입", req.getUserId());
+        log.info("userId:{}, 결제 진입", req.getUserId());
 
         //구매 가능한지 체크
         if (!enterPayService.canPurchaseItem(req)) {
@@ -84,13 +84,13 @@ public class ExternalPayController {
         log.info("orderId:{},결제 API",req.getOrderId());
         //주문 실패
         if(req.getOrderId() == -1L){
-            return ResponseEntity.ok().body("주문 생성을 실패했습니다.");
+            return ResponseEntity.ok().body("fail to create order");
         }
 
         //주문 상태 'PAYMENT_VIEW'인지 확인
         if (!payService.isPaymentView(req.getOrderId())) {
             log.info("orderId:{}, paymentView 상태가 아니라 주문 취소");
-            return ResponseEntity.ok().body("정상적인 주문 상태가 아닙니다.");
+            return ResponseEntity.ok().body("no normal order status");
         }
 
         //'PAYMENT_IN_PROGRESS'으로 주문 상태 변환
@@ -104,7 +104,7 @@ public class ExternalPayController {
             log.info("orderId:{},결제 중 실패(잔액 부족)",req.getOrderId());
 
             payService.cancelOrder(req.getOrderId());
-            return ResponseEntity.ok().body("카드사 요청에 의해 주문이 취소되었습니다.");
+            return ResponseEntity.ok().body("cancel order by card company request");
         }
 
         //'PAYMENT_COMPLETED'로 주문 상태 변환
@@ -112,7 +112,7 @@ public class ExternalPayController {
 
         payService.changeOrderStatus(req.getOrderId(), "PAYMENT_COMPLETED");
 
-        return ResponseEntity.ok().body("결제가 완료되었습니다.");
+        return ResponseEntity.ok().body("complete pay ");
     }
 
     /**
@@ -135,7 +135,7 @@ public class ExternalPayController {
             log.info("userId:{}, orderId:{} / 주문 취소", req.getUserId(), orderId);
 
             payService.cancelOrder(orderId);
-            return ResponseEntity.ok().body("고객 변심으로 주문이 취소되었습니다.");
+            return ResponseEntity.ok().body("cancel order for customer");
         }
 
         //결제
