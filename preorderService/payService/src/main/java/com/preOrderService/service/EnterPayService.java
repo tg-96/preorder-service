@@ -79,6 +79,7 @@ public class EnterPayService {
     /**
      * 재고가 남았는지 체크
      */
+    @Transactional
     public boolean isRemainStock(PayRequestDto req) {
         ResponseEntity<Long> response;
         try {
