@@ -25,7 +25,7 @@ public class StockService {
      * 락 획득
      */
     private boolean lock(String key) {
-        return redisTemplate.opsForValue().setIfAbsent(key, 1L, Duration.ofSeconds(10));
+        return redisTemplate.opsForValue().setIfAbsent(key, 1L, Duration.ofMillis(100));
     }
 
     /**
@@ -41,30 +41,36 @@ public class StockService {
 
     public Long getStockByItemId(Long itemId) throws InterruptedException {
         String lockKey = "lockKey:" + itemId;
+        Item item = null;
+
         //락 획득
         while (!lock(lockKey)) {
             Thread.sleep(100L);
         }
 
-        //캐시에 저장된 재고가 있는지 확인
-        String key = "item:stock:" + itemId;
-        Long stock = redisTemplate.opsForValue().get(key);
+        try {
+            //캐시에 저장된 재고가 있는지 확인
+            String key = "item:stock:" + itemId;
+            Long stock = redisTemplate.opsForValue().get(key);
 
-        // 캐시에 저장된 재고가 있으면 값 리턴
-        if (stock != null) {
-            return stock;
+            // 캐시에 저장된 재고가 있으면 값 리턴
+            if (stock != null) {
+                return stock;
+            }
+
+            //캐시에 저장된 재고가 없으면 RDB에서 재고 조회
+            item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+
+            //캐시에 재고 저장
+            redisTemplate.opsForValue().set(key, item.getStock());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            //락 반환
+            unlock(lockKey);
+
+            return item.getStock();
         }
-
-        //캐시에 저장된 재고가 없으면 RDB에서 재고 조회
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-
-        //캐시에 재고 저장
-        redisTemplate.opsForValue().set(key, item.getStock());
-
-        //락 반환
-        unlock(lockKey);
-
-        return item.getStock();
     }
 
     /**
@@ -73,11 +79,11 @@ public class StockService {
 
     public void addStock(StockRequest req) throws InterruptedException {
         String lockKey = "lockKey:" + req.getItemId();
+
         //락 획득
         while (!lock(lockKey)) {
             Thread.sleep(100L);
         }
-
 
         //증가시킬 재고가 0이하이면, 진행 할 필요가 없다.
         if (req.getCount() <= 0) {
@@ -103,10 +109,10 @@ public class StockService {
             //RDB 업데이트 실패 시 cache 원상 복귀
             redisTemplate.opsForValue().decrement(key, req.getCount());
             throw new ItemServiceException(ErrorCode.FAIL_SYNC_DATABASE);
+        } finally {
+            //락 반환
+            unlock(lockKey);
         }
-
-        //락 반환
-        unlock(lockKey);
     }
 
     /**
@@ -114,8 +120,8 @@ public class StockService {
      */
 
     public void reduceStock(StockRequest req) throws InterruptedException {
-
         String lockKey = "lockKey:" + req.getItemId();
+
         //락 획득
         while (!lock(lockKey)) {
             Thread.sleep(100L);
@@ -156,9 +162,9 @@ public class StockService {
             log.info("RDB와 캐시 동기화 실패 후 캐시 재고(원상복귀):{}", increment);
 
             throw new ItemServiceException(ErrorCode.FAIL_SYNC_DATABASE);
+        } finally {
+            //락 반환
+            unlock(lockKey);
         }
-
-        //락 반환
-        unlock(lockKey);
     }
 }
