@@ -3,7 +3,6 @@ package com.preOrderService.service;
 import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.OrderRequestDto;
 import com.preOrderService.dto.PayRequestDto;
-import com.preOrderService.dto.StockRequest;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +50,7 @@ class EnterPayServiceTest {
 
             //then
             verify(orderServiceClient, times(1)).createOrder(any(OrderRequestDto.class));
-            verify(itemServiceClient, never()).addStock(any(StockRequest.class));
+            verify(itemServiceClient, never()).cancelStock(any(PayRequestDto.class));
         }
 
         @Test
@@ -69,41 +68,7 @@ class EnterPayServiceTest {
             //then
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.CREATE_ORDER_API_ERROR);
             verify(orderServiceClient, times(1)).createOrder(any(OrderRequestDto.class));
-            verify(itemServiceClient, times(1)).addStock(any(StockRequest.class));
-        }
-    }
-
-    @Nested
-    @DisplayName("재고 차감 요청")
-    class requestReduceStock {
-        @Test
-        @DisplayName("성공")
-        void success() {
-            //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-
-            //when
-            payService.requestReduceStock(payRequestDto);
-
-            //then
-            verify(itemServiceClient, times(1)).reduceStock(any(StockRequest.class));
-        }
-
-        @Test
-        @DisplayName("실패")
-        void fail() {
-            //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            doThrow(new RuntimeException()).when(itemServiceClient).reduceStock(any(StockRequest.class));
-
-            //when
-            PayServiceException ex = assertThrows(PayServiceException.class, () -> {
-                payService.requestReduceStock(payRequestDto);
-            });
-
-            //then
-            verify(itemServiceClient, times(1)).reduceStock(any(StockRequest.class));
-            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.REDUCE_STOCK_API_ERROR);
+            verify(itemServiceClient, times(1)).cancelStock(any(PayRequestDto.class));
         }
     }
 
@@ -160,49 +125,35 @@ class EnterPayServiceTest {
     }
 
     @Nested
-    @DisplayName("재고가 남았는지 체크")
+    @DisplayName("재고 예약")
     class IsRemainStock {
         @Test
         @DisplayName("성공")
         void success() {
             //given
             PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            when(itemServiceClient.getStockByItemId(any(Long.class))).thenReturn(ResponseEntity.ok().body(10L));
+            when(itemServiceClient.reserveStock(any(PayRequestDto.class))).thenReturn(ResponseEntity.ok().body(true));
 
             //when
-            boolean remainStock = payService.isRemainStock(payRequestDto);
+            boolean reserveStock = payService.reserveStockRequest(payRequestDto);
 
             //then
-            assertThat(remainStock).isTrue();
+            assertThat(reserveStock).isTrue();
         }
         @Test
         @DisplayName("재고가 부족")
         void outOfStock() {
             //given
             PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            when(itemServiceClient.getStockByItemId(any(Long.class))).thenReturn(ResponseEntity.ok().body(1L));
+            when(itemServiceClient.reserveStock(any(PayRequestDto.class))).thenReturn(ResponseEntity.ok().body(false));
 
             //when
-            boolean remainStock = payService.isRemainStock(payRequestDto);
+            boolean reserveStock = payService.reserveStockRequest(payRequestDto);
 
             //then
-            assertThat(remainStock).isFalse();
+            assertThat(reserveStock).isFalse();
         }
-        @Test
-        @DisplayName("재고APi 호출중 에러")
-        void GET_ITEM_STOCK_API_ERROR() {
-            //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            doThrow(new RuntimeException()).when(itemServiceClient).getStockByItemId(any(Long.class));
 
-            //when
-            PayServiceException ex = assertThrows(PayServiceException.class, () -> {
-                payService.isRemainStock(payRequestDto);
-            });
-
-            //then
-            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.GET_ITEM_STOCK_API_ERROR);
-        }
     }
 
 }

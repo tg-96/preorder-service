@@ -28,3 +28,8 @@
 2024-02-25T02:15:42.942+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
 2024-02-25T02:20:42.971+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
 2024-02-25T02:25:42.968+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2024-02-25T02:30:43.187+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2024-02-25T02:35:43.185+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2024-02-25T02:40:43.198+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2024-02-25T02:45:43.189+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2024-02-25T02:50:43.183+09:00  INFO 37894 --- [api-payService] [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

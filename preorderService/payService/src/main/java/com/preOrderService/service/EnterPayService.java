@@ -3,9 +3,6 @@ package com.preOrderService.service;
 import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.OrderRequestDto;
 import com.preOrderService.dto.PayRequestDto;
-import com.preOrderService.dto.StockRequest;
-import com.preOrderService.exception.ErrorCode;
-import com.preOrderService.exception.PayServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +34,7 @@ public class EnterPayService {
 
         Boolean reserveStock = response.getBody();
         log.info("재고 예약 여부:{}"+reserveStock);
+
         return reserveStock;
     }
 
@@ -57,8 +55,6 @@ public class EnterPayService {
         } catch (Exception e) {
             //재고 예약 취소
             log.info("userid:{},주문 생성 요청 실패",payReq.getUserId());
-
-            StockRequest stockReq = new StockRequest(payReq.getItemId(), payReq.getCount());
 
             itemServiceClient.cancelStock(payReq);
             return -1L;

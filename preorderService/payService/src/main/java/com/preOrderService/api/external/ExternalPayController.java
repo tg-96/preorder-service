@@ -70,13 +70,8 @@ public class ExternalPayController {
         //락 반환
         lock.unlock();
 
-        //주문 생성 요청
+        //주문 생성 요청, 실패 했을 경우 -1 리턴
         Long orderId = enterPayService.requestCreateOrder(req);
-
-        //실패 했을 경우
-        if(orderId == -1L){
-            throw new PayServiceException(ErrorCode.CREATE_ORDER_API_ERROR);
-        }
 
         return ResponseEntity.ok().body(orderId);
     }
@@ -87,11 +82,15 @@ public class ExternalPayController {
     @PostMapping("/pay")
     public ResponseEntity<String> pay(@RequestBody OrderIdRequestDto req) {
         log.info("orderId:{},결제 API",req.getOrderId());
+        //주문 실패
+        if(req.getOrderId() == -1L){
+            return ResponseEntity.ok().body("주문 생성을 실패했습니다.");
+        }
 
         //주문 상태 'PAYMENT_VIEW'인지 확인
         if (!payService.isPaymentView(req.getOrderId())) {
             log.info("orderId:{}, paymentView 상태가 아니라 주문 취소");
-            throw new PayServiceException(ErrorCode.IS_NOT_PAYMENT_VIEW_STATUS);
+            return ResponseEntity.ok().body("정상적인 주문 상태가 아닙니다.");
         }
 
         //'PAYMENT_IN_PROGRESS'으로 주문 상태 변환
@@ -105,7 +104,7 @@ public class ExternalPayController {
             log.info("orderId:{},결제 중 실패(잔액 부족)",req.getOrderId());
 
             payService.cancelOrder(req.getOrderId());
-            return ResponseEntity.ok().body("주문이 취소되었습니다.");
+            return ResponseEntity.ok().body("카드사 요청에 의해 주문이 취소되었습니다.");
         }
 
         //'PAYMENT_COMPLETED'로 주문 상태 변환
@@ -136,7 +135,7 @@ public class ExternalPayController {
             log.info("userId:{}, orderId:{} / 주문 취소", req.getUserId(), orderId);
 
             payService.cancelOrder(orderId);
-            return ResponseEntity.ok().body("주문이 취소되었습니다.");
+            return ResponseEntity.ok().body("고객 변심으로 주문이 취소되었습니다.");
         }
 
         //결제

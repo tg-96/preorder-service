@@ -2,7 +2,7 @@ package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.dto.OrdersResponseDto;
-import com.preOrderService.dto.StockRequest;
+import com.preOrderService.dto.PayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import lombok.RequiredArgsConstructor;
@@ -72,10 +72,10 @@ public class PayService {
             OrderStatusRequestDto req = new OrderStatusRequestDto(order.getOrderId(), "PAYMENT_CANCEL");
             orderServiceClient.changeStatus(req);
 
-            //재고 롤백
-            log.info("orderId:{}, 재고 롤백", orderId);
-            StockRequest stockRequest = new StockRequest(order.getItemId(), order.getQuantity());
-            itemServiceClient.addStock(stockRequest);
+            //재고 예약 취소
+            log.info("orderId:{}, 재고 예약 취소", orderId);
+            PayRequestDto payRequestDto = new PayRequestDto(order.getUserId(), order.getOrderId(), order.getQuantity());
+            itemServiceClient.cancelStock(payRequestDto);
         }
         catch (Exception e) {
             throw new PayServiceException(ErrorCode.ORDER_CANCEL_ERROR);
