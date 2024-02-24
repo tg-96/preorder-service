@@ -23,7 +23,27 @@ public class EnterPayService {
     private final OrderServiceClient orderServiceClient;
 
     /**
+     * 재고 예약 요청
+     * response : true -> 재고 예약 완료
+     *          : false -> 재고 예약 불가능
+     */
+    @Transactional
+    public boolean reserveStockRequest(PayRequestDto req) {
+        log.info("userId:{}"+req.getUserId());
+        log.info("itemId:{}"+req.getItemId());
+        log.info("stockCount:{}"+req.getCount());
+
+        ResponseEntity<Boolean> response = itemServiceClient.reserveStock(req);
+
+        Boolean reserveStock = response.getBody();
+        log.info("재고 예약 여부:{}"+reserveStock);
+        return reserveStock;
+    }
+
+    /**
      * 주문 생성 요청
+     * return : 양수 -> orderId값
+     *        : -1 -> 주문 생성 실패 -> 재고 예약 취소
      */
     @Transactional
     public Long requestCreateOrder(PayRequestDto payReq) {
@@ -35,31 +55,13 @@ public class EnterPayService {
             ResponseEntity<Long> response = orderServiceClient.createOrder(req);
             return response.getBody();
         } catch (Exception e) {
-            //재고 원상 복귀
+            //재고 예약 취소
             log.info("userid:{},주문 생성 요청 실패",payReq.getUserId());
 
             StockRequest stockReq = new StockRequest(payReq.getItemId(), payReq.getCount());
 
-            log.info("userid:{},캐시 재고 원상 복귀",payReq.getUserId());
-
-            itemServiceClient.addStock(stockReq);
-
-            throw new PayServiceException(ErrorCode.CREATE_ORDER_API_ERROR);
-        }
-    }
-
-    /**
-     * 재고 차감 요청
-     */
-    @Transactional
-    public void requestReduceStock(PayRequestDto payReq) {
-        log.info("userId:{}, 재고 차감 요청", payReq.getUserId());
-
-        try {
-            StockRequest req = new StockRequest(payReq.getItemId(), payReq.getCount());
-            itemServiceClient.reduceStock(req);
-        } catch (Exception e) {
-            throw new PayServiceException(ErrorCode.REDUCE_STOCK_API_ERROR);
+            itemServiceClient.cancelStock(payReq);
+            return -1L;
         }
     }
 
@@ -73,32 +75,6 @@ public class EnterPayService {
                 return false;
             }
         }
-        return true;
-    }
-
-    /**
-     * 재고가 남았는지 체크
-     */
-    @Transactional
-    public boolean isRemainStock(PayRequestDto req) {
-        ResponseEntity<Long> response;
-        try {
-            response = itemServiceClient.getStockByItemId(req.getItemId());
-        } catch (Exception e) {
-            throw new PayServiceException(ErrorCode.GET_ITEM_STOCK_API_ERROR);
-        }
-
-        Long stock = response.getBody();
-        log.info("userId:{}, 남은 재고:{}",req.getUserId(),stock);
-
-        //구매 수 보다 재고가 적으면 예외 처리
-        if (stock < req.getCount()) {
-            log.info("userId:{}, 재고 부족",req.getUserId());
-
-            return false;
-        }
-        log.info("userId:{}, 재고 충분",req.getUserId());
-
         return true;
     }
 }

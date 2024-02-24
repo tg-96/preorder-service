@@ -19,8 +19,10 @@ spring:
     redis:
       host: localhost
       port: 79
+
   application:
     name: api-payService
+
 ## Eureka 서버
 eureka:
   client:

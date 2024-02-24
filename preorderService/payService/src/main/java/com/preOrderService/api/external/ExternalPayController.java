@@ -7,13 +7,16 @@ import com.preOrderService.exception.PayServiceException;
 import com.preOrderService.service.EnterPayService;
 import com.preOrderService.service.PayService;
 import lombok.RequiredArgsConstructor;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,13 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExternalPayController {
     private final EnterPayService enterPayService;
     private final PayService payService;
+    private final RedissonClient redissonClient;
+
 
     /**
      * 결제 진입 API
      * return: orderId
      */
     @PostMapping("/enter")
-    public ResponseEntity<Long> enterPay(@RequestBody PayRequestDto req) {
+    public ResponseEntity<Long> enterPay(@RequestBody PayRequestDto req) throws InterruptedException {
         log.info("userId:{} 결제 진입", req.getUserId());
 
         //구매 가능한지 체크
@@ -39,18 +44,39 @@ public class ExternalPayController {
         }
         log.info("userId:{} 구매 가능", req.getUserId());
 
+        //Lock
+        String lockKey = "lockKey:" + req.getItemId();
+        RLock lock = redissonClient.getLock(lockKey);
 
-        log.info("userId:{} 재고 남았는지 체크", req.getUserId());
-        //재고가 남았는지 체크
-        if (!enterPayService.isRemainStock(req)) {
+        //락 획득
+        boolean success = lock.tryLock(10, 1, TimeUnit.SECONDS);
+
+        if(!success){
+            log.info("lock 획득 실패");
+            return ResponseEntity.ok().body(-1L);
+        }
+
+        //재고 예약
+        log.info("userId:{} 재고 예약 요청", req.getUserId());
+        boolean reserveStock = enterPayService.reserveStockRequest(req);
+
+        if(reserveStock){
+            log.info("userId:{}, 재고 예약 성공",req.getUserId());
+        }else{
+            log.info("userId:{}, 재고 예약 실패",req.getUserId());
             throw new PayServiceException(ErrorCode.OUT_OF_STOCK);
         }
 
-        //재고 차감 요청
-        enterPayService.requestReduceStock(req);
+        //락 반환
+        lock.unlock();
 
         //주문 생성 요청
         Long orderId = enterPayService.requestCreateOrder(req);
+
+        //실패 했을 경우
+        if(orderId == -1L){
+            throw new PayServiceException(ErrorCode.CREATE_ORDER_API_ERROR);
+        }
 
         return ResponseEntity.ok().body(orderId);
     }
@@ -61,6 +87,7 @@ public class ExternalPayController {
     @PostMapping("/pay")
     public ResponseEntity<String> pay(@RequestBody OrderIdRequestDto req) {
         log.info("orderId:{},결제 API",req.getOrderId());
+
         //주문 상태 'PAYMENT_VIEW'인지 확인
         if (!payService.isPaymentView(req.getOrderId())) {
             log.info("orderId:{}, paymentView 상태가 아니라 주문 취소");
@@ -93,7 +120,7 @@ public class ExternalPayController {
      * 예약 시간 동시주문 상황 시뮬레이션
      */
     @PostMapping("/test")
-    public ResponseEntity<String> simulate(@RequestBody PayRequestDto req) {
+    public ResponseEntity<String> simulate(@RequestBody PayRequestDto req) throws InterruptedException {
         //결제 진입
         ResponseEntity<Long> enterPayResponse = enterPay(req);
 
