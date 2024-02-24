@@ -48,7 +48,7 @@ class StockServiceTest {
     class getStock{
         @Test
         @DisplayName("성공: 캐시에 재고가 있는 상태")
-        void stockInCache() {
+        void stockInCache() throws InterruptedException {
             //given
             Long itemId = 1L;
             String key = "item:stock "+itemId;
@@ -62,7 +62,7 @@ class StockServiceTest {
         }
         @Test
         @DisplayName("성공: 캐시에 재고가 없는 상태")
-        void stockNotInCache(){
+        void stockNotInCache() throws InterruptedException {
             //given
             ItemRequestDto req = new ItemRequestDto("냉장고", "좋은 냉장고", 10000L, 10L, LocalDateTime.now().plusWeeks(1L), "reserve");
             Long itemId = productService.createItem(req).getId();
@@ -82,7 +82,7 @@ class StockServiceTest {
     class addStock{
         @Test
         @DisplayName("성공")
-        void success(){
+        void success() throws InterruptedException {
             //given
             ItemRequestDto itemRequestDto = new ItemRequestDto("냉장고", "좋은 냉장고", 10000L, 10L, LocalDateTime.now().plusWeeks(1L), "reserve");
             Long itemId = productService.createItem(itemRequestDto).getId();
@@ -142,7 +142,7 @@ class StockServiceTest {
     class ReduceStock{
         @Test
         @DisplayName("성공")
-        void success(){
+        void success() throws InterruptedException {
             //given
             ItemRequestDto itemRequestDto = new ItemRequestDto("냉장고", "좋은 냉장고", 10000L, 10L, LocalDateTime.now().plusWeeks(1L), "reserve");
 

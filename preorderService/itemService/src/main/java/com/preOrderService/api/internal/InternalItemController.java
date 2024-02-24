@@ -18,7 +18,7 @@ public class InternalItemController {
      * 재고 추가
      */
     @PostMapping("/stock/add")
-    public ResponseEntity<Void> addStock(@RequestBody StockRequest req){
+    public ResponseEntity<Void> addStock(@RequestBody StockRequest req) throws InterruptedException {
         stockService.addStock(req);
         return ResponseEntity.ok().build();
     }
@@ -27,7 +27,7 @@ public class InternalItemController {
      * 재고 감소
      */
     @PostMapping("/stock/reduce")
-    public ResponseEntity<Void> reduceStock(@RequestBody StockRequest req){
+    public ResponseEntity<Void> reduceStock(@RequestBody StockRequest req) throws InterruptedException {
         stockService.reduceStock(req);
         return ResponseEntity.ok().build();
     }
@@ -36,7 +36,7 @@ public class InternalItemController {
      * 재고 조회
      */
     @GetMapping("/stock/{itemId}")
-    public ResponseEntity<Long> getStock(@PathVariable("itemId")Long itemId){
+    public ResponseEntity<Long> getStock(@PathVariable("itemId")Long itemId) throws InterruptedException {
         Long response = stockService.getStockByItemId(itemId);
         return ResponseEntity.ok().body(response);
     }
