@@ -1,7 +1,6 @@
 package com.preOrderService.service;
 
-import com.preOrderService.dto.PayRequestDto;
-import com.preOrderService.dto.StockRequest;
+import com.preOrderService.dto.EnterPayRequestDto;
 import com.preOrderService.entity.Item;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.ItemServiceException;
@@ -21,12 +20,14 @@ public class StockService {
     private final RedisTemplate<String, Long> redisTemplate;
 
     //재고 예약
-    public Boolean reserveStock(PayRequestDto payRequestDto){
+    public Boolean reserveStock(EnterPayRequestDto payRequestDto){
         // 재고 조회
         Item item = itemRepository.findById(payRequestDto.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         if(item.getStock()-payRequestDto.getCount() >= 0){
             item.minusStock(payRequestDto.getCount());
+            log.info("재고 예약: userId:{}\nitemId:{}\n,count:{}\nitem.getStock():{},req.getCount():{}\n남은재고:{}",payRequestDto.getUserId(),payRequestDto.getItemId(),payRequestDto.getCount(),item.getStock(),payRequestDto.getCount(),item.getStock()-payRequestDto.getCount());
+
             return true;
         }
         else{
@@ -35,11 +36,15 @@ public class StockService {
     }
 
     //재고 예약 취소
-    public void cancelStock(PayRequestDto payRequestDto){
+    public void cancelStock(EnterPayRequestDto payRequestDto){
         //재고 조회
+
         Item item = itemRepository.findById(payRequestDto.getItemId()).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
 
         item.addStock(payRequestDto.getCount());
+
+        log.info("재고 예약 취소: userId:{}\nitemId:{}\n,count:{}\nitem.getStock():{},req.getCount():{}\n남은재고:{}",payRequestDto.getUserId(),payRequestDto.getItemId(),payRequestDto.getCount(),item.getStock(),payRequestDto.getCount(),item.getStock()+payRequestDto.getCount());
+
     }
 
 //    /**

@@ -2,7 +2,7 @@ package com.preOrderService.service;
 
 import com.preOrderService.dto.CheckReserveResponseDto;
 import com.preOrderService.dto.OrderRequestDto;
-import com.preOrderService.dto.PayRequestDto;
+import com.preOrderService.dto.EnterPayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import org.junit.jupiter.api.DisplayName;
@@ -43,21 +43,21 @@ class EnterPayServiceTest {
         @DisplayName("success")
         void success() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
 
             //when
             payService.requestCreateOrder(payRequestDto);
 
             //then
             verify(orderServiceClient, times(1)).createOrder(any(OrderRequestDto.class));
-            verify(itemServiceClient, never()).cancelStock(any(PayRequestDto.class));
+            verify(itemServiceClient, never()).cancelStock(any(EnterPayRequestDto.class));
         }
 
         @Test
         @DisplayName("실패 시 재고 원상 복귀 요청")
         void fail() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
             doThrow(new RuntimeException()).when(orderServiceClient).createOrder(any(OrderRequestDto.class));
 
             //when
@@ -68,7 +68,7 @@ class EnterPayServiceTest {
             //then
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.CREATE_ORDER_API_ERROR);
             verify(orderServiceClient, times(1)).createOrder(any(OrderRequestDto.class));
-            verify(itemServiceClient, times(1)).cancelStock(any(PayRequestDto.class));
+            verify(itemServiceClient, times(1)).cancelStock(any(EnterPayRequestDto.class));
         }
     }
 
@@ -79,7 +79,7 @@ class EnterPayServiceTest {
         @Test
         void success() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
             CheckReserveResponseDto general = new CheckReserveResponseDto("general", null);
             when(itemServiceClient.getItemTypeAndTime(any(Long.class))).thenReturn(ResponseEntity.ok().body(general));
 
@@ -95,7 +95,7 @@ class EnterPayServiceTest {
         @Test
         void success2() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
             CheckReserveResponseDto reserve = new CheckReserveResponseDto("reserve", LocalDateTime.now().minusDays(2L));
             when(itemServiceClient.getItemTypeAndTime(any(Long.class))).thenReturn(ResponseEntity.ok().body(reserve));
 
@@ -111,7 +111,7 @@ class EnterPayServiceTest {
         @Test
         void fail() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
             CheckReserveResponseDto reserve = new CheckReserveResponseDto("reserve", LocalDateTime.now().plusDays(2L));
             when(itemServiceClient.getItemTypeAndTime(any(Long.class))).thenReturn(ResponseEntity.ok().body(reserve));
 
@@ -131,8 +131,8 @@ class EnterPayServiceTest {
         @DisplayName("성공")
         void success() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            when(itemServiceClient.reserveStock(any(PayRequestDto.class))).thenReturn(ResponseEntity.ok().body(true));
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
+            when(itemServiceClient.reserveStock(any(EnterPayRequestDto.class))).thenReturn(ResponseEntity.ok().body(true));
 
             //when
             boolean reserveStock = payService.reserveStockRequest(payRequestDto);
@@ -144,8 +144,8 @@ class EnterPayServiceTest {
         @DisplayName("재고가 부족")
         void outOfStock() {
             //given
-            PayRequestDto payRequestDto = new PayRequestDto(1L, 1L, 2L);
-            when(itemServiceClient.reserveStock(any(PayRequestDto.class))).thenReturn(ResponseEntity.ok().body(false));
+            EnterPayRequestDto payRequestDto = new EnterPayRequestDto(1L, 1L, 2L);
+            when(itemServiceClient.reserveStock(any(EnterPayRequestDto.class))).thenReturn(ResponseEntity.ok().body(false));
 
             //when
             boolean reserveStock = payService.reserveStockRequest(payRequestDto);

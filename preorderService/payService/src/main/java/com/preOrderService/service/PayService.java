@@ -2,14 +2,19 @@ package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.dto.OrdersResponseDto;
+import com.preOrderService.dto.EnterPayRequestDto;
 import com.preOrderService.dto.PayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -18,26 +23,35 @@ import org.springframework.transaction.annotation.Transactional;
 public class PayService {
     private final OrderServiceClient orderServiceClient;
     private final ItemServiceClient itemServiceClient;
+    private final RedissonClient redissonClient;
+
 
     /**
      * 주문 상태 'PAYMENT_VIEW'인지 확인
      */
-    public boolean isPaymentView(Long orderId) {
+    public boolean isPaymentView(PayRequestDto requestDto) {
         //주문 상태 조회
         try {
-            ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
+            ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(requestDto.getOrderId());
             String orderStatus = response.getBody().getOrderStatus();
-            log.info("orderId:{}, order status:{}",orderId,orderStatus);
+
+            log.info("주문상태\nuserId:{}\norderId:{}\norder status:{}",
+                    requestDto.getUserId(),requestDto.getOrderId(),orderStatus);
+
             //주문 상태 확인
             if (!orderStatus.equalsIgnoreCase("PAYMENT_VIEW")) {
                 //결제 취소
-                log.info("orderId:{}, order status:{}, no \"PAYMENT_VIEW\" / cancel pay ",orderId,orderStatus);
-                cancelOrder(orderId);
+                log.info("주문 상태가 \"PAYMENT_VIEW\"가 아니라, 결제 취소\n" +
+                        "userId:{}, orderId:{}, order status:{},",
+                        requestDto.getUserId(),requestDto.getOrderId(),orderStatus);
+
+                cancelOrder(requestDto);
                 return false;
             }
             return true;
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new PayServiceException(ErrorCode.GET_ORDER_API_ERROR);
         }
     }
@@ -59,26 +73,38 @@ public class PayService {
      * 주문 취소
      */
     @Transactional
-    public void cancelOrder(Long orderId) {
+    public void cancelOrder(PayRequestDto payRequestDto) {
+        //Lock 설정
+        String lockKey = "lockKey:" + payRequestDto.getItemId();
+        RLock lock = redissonClient.getLock(lockKey);
+
         //주문 조회
         try {
-            log.info("orderId:{}, cancel order", orderId);
+            //락 획득, 무조건 취소 해야 하므로 wait time을 길게 함.
+            if (!lock.tryLock(30, 1, TimeUnit.SECONDS)) {
+                log.info("cancelOrder\nuserId:{}\norderId:{}\nlock 획득 실패", payRequestDto.getUserId(),payRequestDto.getOrderId());
+            }
 
-            ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(orderId);
+            log.info("cancelOrder\nuserId:{}\norderId:{}\nlock 획득", payRequestDto.getUserId(),payRequestDto.getOrderId());
+
+            ResponseEntity<OrdersResponseDto> response = orderServiceClient.getOrderInfo(payRequestDto.getOrderId());
             OrdersResponseDto order = response.getBody();
 
             //주문 취소 상태로 변경 요청
-            log.info("orderId:{}, 주문 취소 상태로 변경 요청", orderId);
+            log.info("cancelOrder\nuserId:{}\norderId:{}\n주문 취소 상태로 변경 요청", payRequestDto.getUserId(),payRequestDto.getOrderId());
             OrderStatusRequestDto req = new OrderStatusRequestDto(order.getOrderId(), "PAYMENT_CANCEL");
             orderServiceClient.changeStatus(req);
 
             //재고 예약 취소
-            log.info("orderId:{}, 재고 예약 취소", orderId);
-            PayRequestDto payRequestDto = new PayRequestDto(order.getUserId(), order.getOrderId(), order.getQuantity());
-            itemServiceClient.cancelStock(payRequestDto);
+            log.info("cancelOrder\nuserId:{}\norderId:{}\n재고 예약 취소 요청", payRequestDto.getUserId(),payRequestDto.getOrderId());
+            EnterPayRequestDto enterPayRequestDto = new EnterPayRequestDto(order.getUserId(), order.getItemId(), order.getQuantity());
+            itemServiceClient.cancelStock(enterPayRequestDto);
         }
         catch (Exception e) {
-            throw new PayServiceException(ErrorCode.ORDER_CANCEL_ERROR);
+            e.printStackTrace();
+        }finally {
+            //락 해제
+            lock.unlock();
         }
     }
 }

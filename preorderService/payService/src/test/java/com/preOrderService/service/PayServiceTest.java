@@ -3,7 +3,7 @@ package com.preOrderService.service;
 
 import com.preOrderService.dto.OrderStatusRequestDto;
 import com.preOrderService.dto.OrdersResponseDto;
-import com.preOrderService.dto.PayRequestDto;
+import com.preOrderService.dto.EnterPayRequestDto;
 import com.preOrderService.exception.ErrorCode;
 import com.preOrderService.exception.PayServiceException;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +70,7 @@ class PayServiceTest {
             when(orderServiceClient.changeStatus(any(OrderStatusRequestDto.class)))
                     .thenReturn(ResponseEntity.ok().build());
 
-            when(itemServiceClient.reserveStock(any(PayRequestDto.class)))
+            when(itemServiceClient.reserveStock(any(EnterPayRequestDto.class)))
                     .thenReturn(ResponseEntity.ok().build());
 
             //when

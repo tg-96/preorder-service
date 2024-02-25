@@ -12,6 +12,7 @@ public enum ErrorCode {
     CHANGE_ORDER_STATUS_API_ERROR("주문 상태 변경 API 호출을 실패했습니다."),
     GET_ORDER_API_ERROR("주문 조회 API 호출에 실패 했습니다."),
     ORDER_CANCEL_ERROR("주문이 취소 되었습니다."),
+    FAIL_TO_PAY_BECAUSE_OUT_OF_BALANCE("결제 실패 잔액 부족"),
     IS_NOT_PAYMENT_VIEW_STATUS("PAYMENT_VIEW 상태가 아닙니다.");
 
     private final String message;

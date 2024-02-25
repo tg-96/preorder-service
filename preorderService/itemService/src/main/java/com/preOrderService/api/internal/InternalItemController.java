@@ -1,8 +1,7 @@
 package com.preOrderService.api.internal;
 
 import com.preOrderService.dto.CheckReserveResponseDto;
-import com.preOrderService.dto.PayRequestDto;
-import com.preOrderService.dto.StockRequest;
+import com.preOrderService.dto.EnterPayRequestDto;
 import com.preOrderService.service.ProductService;
 import com.preOrderService.service.StockService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class InternalItemController {
      * return : false -> 재고 예약 불가능
      */
     @PostMapping("/stock/reserve")
-    public ResponseEntity<Boolean> reserveStock(@RequestBody PayRequestDto req) throws InterruptedException {
+    public ResponseEntity<Boolean> reserveStock(@RequestBody EnterPayRequestDto req) throws InterruptedException {
         Boolean ok = stockService.reserveStock(req);
 
         return ResponseEntity.ok().body(ok);
@@ -32,7 +31,7 @@ public class InternalItemController {
      * 재고 감소
      */
     @PostMapping("/stock/cancel")
-    public ResponseEntity<Void> cancelStock(@RequestBody PayRequestDto req) throws InterruptedException {
+    public ResponseEntity<Void> cancelStock(@RequestBody EnterPayRequestDto req) throws InterruptedException {
         stockService.cancelStock(req);
         return ResponseEntity.ok().build();
     }

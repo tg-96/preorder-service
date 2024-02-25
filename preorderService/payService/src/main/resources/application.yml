@@ -35,10 +35,4 @@ eureka:
 server:
   port: 8082
 
-logging:
-  file:
-    name: ./logs/paySimulation.log
-    max-size: 20MB
-  level:
-    root: INFO
 
