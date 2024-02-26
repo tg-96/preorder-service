@@ -7,8 +7,11 @@ import com.preOrderService.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,8 +33,6 @@ public class StockService {
             if (stock - payRequestDto.getCount() >= 0) {
                 Long newStock = redisTemplate.opsForValue().decrement(key, payRequestDto.getCount());
 
-                //DB에 동기화
-                syncDB(payRequestDto.getItemId(), newStock);
                 return true;
             } else {
                 //재고 부족
@@ -66,10 +67,7 @@ public class StockService {
         //캐시에 재고가 존재 한다면
         if (stock != null) {
             //재고를 증가 시킨다.
-            Long newStock = redisTemplate.opsForValue().increment(key, payRequestDto.getCount());
-
-            //DB에 동기화
-            syncDB(payRequestDto.getItemId(), newStock);
+            redisTemplate.opsForValue().increment(key, payRequestDto.getCount());
         }
         //캐시에 재고 존재하지 않는다면
         else {
@@ -80,8 +78,25 @@ public class StockService {
         }
     }
 
-    private void syncDB(Long itemId, Long newStock) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
-        item.changeStock(newStock);
+    /**
+     * DB와 캐시를 동기화 하는 배치
+     */
+    @Scheduled(fixedRate = 5000)
+    public void syncDB() {
+        Set<String> keys = redisTemplate.keys("itemId:stock:*");
+
+        if(!keys.isEmpty()){
+            for(String key:keys){
+                //캐시에서 itemId의 재고 조회
+                Long stock = redisTemplate.opsForValue().get(key);
+
+                //itemId 파싱
+                String itemId = key.split(":")[2];
+
+                //DB 업데이트
+                Item item = itemRepository.findById(Long.parseLong(itemId)).orElseThrow(() -> new ItemServiceException(ErrorCode.NO_ITEMS));
+                item.changeStock(stock);
+            }
+        }
     }
 }
