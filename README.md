@@ -72,5 +72,5 @@ ex) 10000명의 쓰레드를 동시에 요청하기 위해서는 1~10000까지�
 |payService|8082|결제 관리 서버|
 |eurekaServer|8761|eureka server|
 
-## 트러블 슈팅
+## 트러블 슈팅 정리 Blog
 - [동시성 처리 과정](https://velog.io/@tg-96/%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0-%ED%95%98%EA%B8%B0)
