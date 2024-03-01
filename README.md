@@ -29,9 +29,7 @@ docker-compose up -d
 - Jpa
 - Mysql
 - Redis
-- FeignClient
-- Eureka
-- ApiGateway
+- Docker
 
 ## 구현 요구 사항
 - 상품은 특정 시간에 구매가 활성화 된다.
